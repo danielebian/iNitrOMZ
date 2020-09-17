@@ -10,4 +10,5 @@ iNitrOMZ_v6.0/restart/
 iNitrOMZ_v6.0/comet/*.joblog
 iNitrOMZ_v6.0/comet/*.out
 iNitrOMZ_v6.0/comet/Optim*
+iNitrOMZ_v6.0/comet/SampleRun/
 
