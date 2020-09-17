@@ -1,0 +1,69 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2019 The MathWorks, Inc.
+              R2019b Update 3 (9.7.0.1261785) 64-bit (glnxa64)
+                             November 27, 2019
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> 
+OptCase =
+
+    'Optimmay4'
+
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> Starting parallel pool (parpool) using the 'local' profile ...
+
+{Error using parpool (line 113)
+Parallel pool failed to start with the following error. For more detailed
+information, validate the profile 'local' in the Cluster Profile Manager.
+
+Caused by:
+    Error using parallel.internal.pool.InteractiveClient>iThrowWithCause (line
+    668)
+    Failed to start pool.
+        Error using parallel.internal.customattr.CustomGetSet/get (line 43)
+        Could not open file
+        "/home/yangsi/.matlab/local_cluster_jobs/R2019b/Job1/Task1.in.mat", the
+        error returned was: Unable to read MAT-file
+        /home/yangsi/.matlab/local_cluster_jobs/R2019b/Job1/Task1.in.mat. File
+        might be corrupt..
+} 
+>> >> >> >> >> >> >> >> Starting parallel pool (parpool) using the 'local' profile ...
+
+bgc1d_iteration - cost : 0.069963
+  n=22: (6,13)-CMA-ES(w=[38 25 17 11 7 3]%, mu_eff=4.0) on function bgc1d_fc2minimize_cmaes_parallel
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 12).
+Error while constructing service for bundle: system_bundle, service: N9connector9us_common16MakeInterfaceMapINS_6bayeux25BayeuxServiceProviderImplEJNS_15ServiceProviderENS2_21BayeuxServiceProviderEEEE, error: Resource temporarily unavailable
+com.mathworks.installservicehandler.exception.InstallServiceHandlerInternalException: An internal exception occurred inside the install service handler mechanism
+	at com.mathworks.matlab_login.MatlabLogin.initializeLoginServices(Unknown Source)
+	at com.mathworks.toolbox.distcomp.mwlogin.MatlabLoginController.<clinit>(MatlabLoginController.java:42)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.mathworks.jmi.OpaqueJavaInterface.findClass(OpaqueJavaInterface.java:137)
+Caused by: com.mathworks.jmi.MatlabException: Error in Connector: Did not start the server. Desired port was: 31515. Last error was: Failed to start server: 127.0.0.1:31614, System exception
+	at com.mathworks.jmi.NativeMatlab.SendMatlabMessage(Native Method)
+	at com.mathworks.jmi.NativeMatlab.sendMatlabMessage(NativeMatlab.java:273)
+	at com.mathworks.jmi.MatlabLooper.sendMatlabMessage(MatlabLooper.java:120)
+	at com.mathworks.jmi.Matlab.mtFeval(Matlab.java:1739)
+	at com.mathworks.matlabserver.connector.impl.ConnectorImpl.doEnsureServiceOn(ConnectorImpl.java:217)
+	at com.mathworks.matlabserver.connector.api.Connector.ensureServiceOn(Connector.java:137)
+	... 5 more
+bgc1d_iteration - cost : 0.021924
+bgc1d_iteration - cost : 0.036065
+bgc1d_iteration - cost : 0.021726
+bgc1d_iteration - cost : 0.025498
+bgc1d_iteration - cost : 0.030352
+bgc1d_iteration - cost : 0.025246
+bgc1d_iteration - cost : 0.032992
+bgc1d_iteration - cost : 0.024654
+bgc1d_iteration - cost : 0.032063
+bgc1d_iteration - cost : 0.27773
+bgc1d_iteration - cost : 0.44281
+bgc1d_iteration - cost : 0.36769
+bgc1d_iteration - cost : 4.3756
+Iterat, #Fevals:   Function Value    (median,worst) |Axis Ratio|idx:Min SD idx:Max SD
+    1 ,     14 : 2.1725954041983e-02 +(1e-02,4e+00) | 1.06e+00 | 15:2.8e-01  4:2.8e-01
+slurmstepd: *** JOB 33809260 ON comet-30-01 CANCELLED AT 2020-06-01T19:44:01 ***

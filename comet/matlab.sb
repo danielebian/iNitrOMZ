@@ -1,0 +1,13 @@
+#!/bin/bash
+#SBATCH --job-name="matlab"
+#SBATCH --output="matlab.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --mem=12G
+#SBATCH --ntasks-per-node=12
+#SBATCH --export=ALL
+#SBATCH -t 48:00:00
+
+module load matlab
+ulimit -u 2048
+matlab -nodisplay -nosplash < ForSedTofind_MainScript

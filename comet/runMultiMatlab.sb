@@ -1,0 +1,14 @@
+#!/bin/bash
+
+case="Jan22Optim_normweight"
+rrpath="/home/yangsi/project/NitrOMZ/iNitrOMZ_v6.0/comet/${case}/optimize_cmaes/"
+cd $rrpath
+for i in {1..50..1}
+do
+   cp optimize_cmaes.m optimize_cmaes${i}.m
+   cp matlab.sb matlab${i}.sb
+   sed -i 's/ForSedTofind_OptName/'${case}${i}'/g' optimize_cmaes${i}.m
+   sed -i 's/ForSedTofind_Case/'${case}'/g' optimize_cmaes${i}.m
+   sed -i 's/ForSedTofind_MainScript/optimize_cmaes'${i}'.m/g' matlab${i}.sb
+   qsub matlab${i}.sb 
+done

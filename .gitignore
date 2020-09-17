@@ -1,0 +1,13 @@
+
+*swp
+*swo
+
+iNitrOMZ_v6.0/Data/
+iNitrOMZ_v6.0/saveOut/
+iNitrOMZ_v6.0/optimOut/
+iNitrOMZ_v6.0/restart/
+
+iNitrOMZ_v6.0/comet/*.joblog
+iNitrOMZ_v6.0/comet/*.out
+iNitrOMZ_v6.0/comet/Optim*
+

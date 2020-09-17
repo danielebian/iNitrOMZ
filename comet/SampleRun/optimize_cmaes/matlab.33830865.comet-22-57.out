@@ -1,0 +1,1 @@
+/var/spool/slurmd/job33830865/slurm_script: line 13:   827 Segmentation fault      (core dumped) matlab -nodisplay -nosplash < optimize_cmaes2.m

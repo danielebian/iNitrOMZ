@@ -1,0 +1,13 @@
+#!/bin/bash
+#SBATCH --job-name="matlab4"
+#SBATCH --output="matlab.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=13
+#SBATCH --export=ALL
+#SBATCH -t 48:00:00
+
+module load matlab
+ulimit -u 2048
+rm -rf /home/yangsi/.matlab/local_cluster_jobs
+matlab -nodisplay -nosplash < optimize_cmaes4.m
