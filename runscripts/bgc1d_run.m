@@ -41,8 +41,18 @@ A = parse_pv_pairs(A, varargin);
 % % % % % % % % % % % % % % % % % % % % 
 % Substitute the optimal parameters
 % Change parameters with those selected in Scenario_child(ichr).chromosome
- for indp=1:length(A.ParNames)
-    bgc = bgc1d_change_input(bgc,A.ParNames{indp},A.ParVal(indp));
+ if ~isempty(A.ParNames) 
+    for indp=1:length(A.ParNames)
+       bgc = bgc1d_change_input(bgc,A.ParNames{indp},A.ParVal(indp));
+    end
+    % Updates BGC/N-cycling parameters  that depend on bgc1d_initbgc_params
+    if bgc.depparams
+       bgc = bgc1d_initialize_DepParam(bgc);
+       % Calculate dependent variables relate to isotopes
+       if bgc.RunIsotopes
+          bgc = bgc1d_initIso_Dep_params(bgc);
+       end
+    end
  end
 % % % % % % % % % % % % % % % % % % % % 
  if (A.derived_inputs)

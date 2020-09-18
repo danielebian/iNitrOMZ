@@ -28,11 +28,15 @@
  bgc.zbottom = -1330; % bottom depth (m)
 
  %%%%% Time step / history %%%%%%
- bgc.nt = 120 * 365;% Simulation length in timesteps
- bgc.dt = 1.0 * 86400; % timestep in seconds bgc.hist =  500; 
- bgc.hist = 3 * 365; % save a snapshot every X timesteps
+%bgc.nt = 120 * 365;% Simulation length in timesteps
+%bgc.dt = 1.0 * 86400; % timestep in seconds bgc.hist =  500; 
+%bgc.hist = 3 * 365; % save a snapshot every X timesteps
+ bgc.nt = 160*365;% Simulation length in timesteps
+ bgc.dt = 86400; % timestep in seconds bgc.hist =  500; 
+ bgc.hist = 365*10; % save a snapshot every X timesteps
  bgc.hist_verbose = true; % prompts a message at each saving timestep
  bgc.nhist = floor(bgc.nt/bgc.hist);
+ bgc.hist_time = linspace(bgc.dt*bgc.hist,bgc.nt*bgc.dt,bgc.nhist)/86400/365;
  bgc.FromRestart = 0; % initialize from restart? 1 yes, 0 no
  bgc.RestartFile = 'spinup_ETSP_restart_158.5.mat'; % restart file
  bgc.SaveRestart = 0; %Save restart file? 1 yes, 0 no
