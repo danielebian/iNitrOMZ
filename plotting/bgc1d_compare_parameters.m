@@ -1,11 +1,20 @@
 function bgc1d_compare_parameters(bgc1,bgc2,imode)
 
  if nargin<3
-    imode = 1;
+    imode = 2;
  end
 
  switch imode
  case 1
+    % Uses all parameters that are numerical and scalar
+    allfields = intersect(fieldnames(bgc1),fieldnames(bgc2),'stable');
+    igood = zeros(size(allfields));
+    for indp=1:length(allfields)
+       tmp = bgc1.(allfields{indp});
+       igood(indp) = isscalar(tmp)&isnumeric(tmp); 
+    end
+    parnames = allfields(find(igood));
+ case 2
     parnames = {'wup_param', ...
                 'Kv_param', ...
                 'b', ...

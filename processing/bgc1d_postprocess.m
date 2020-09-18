@@ -75,7 +75,7 @@
  bgc.dwup(2:end-1) = (bgc.wup(3:end) - bgc.wup(1:end-2))/(-2*bgc.dz);
  bgc.ssN2OAdv =  - (bgc.wup .* bgc.dn2o + bgc.dwup .* bgc.n2o);
  bgc.ssN2ODiff = bgc.Kv .* bgc.d2n2o; %bgc.vdKv .* bgc.dn2o + bgc.Kv .* bgc.d2n2o;
- bgc.sms_n2o(1) = 0; bgc.sms_n2o(end) = 0; bgc.n2o_rest(1) = 0; bgc.n2o_rest(end) = 0;
+%bgc.sms_n2o(1) = 0; bgc.sms_n2o(end) = 0; bgc.n2o_rest(1) = 0; bgc.n2o_rest(end) = 0;
 
  % Biological sources and sinks terms
  % Re-creates a "tracers" field to pass to SMS routine
