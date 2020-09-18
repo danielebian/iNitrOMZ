@@ -10,9 +10,12 @@ function bgc1d_compare_parameters(bgc1,bgc2,imode)
     allfields = intersect(fieldnames(bgc1),fieldnames(bgc2),'stable');
     igood = zeros(size(allfields));
     for indp=1:length(allfields)
-       tmp = bgc1.(allfields{indp});
-       igood(indp) = isscalar(tmp)&isnumeric(tmp); 
+       tmp1 = bgc1.(allfields{indp});
+       tmp2 = bgc2.(allfields{indp});
+       igood1(indp) = isscalar(tmp1)&isnumeric(tmp1); 
+       igood2(indp) = isscalar(tmp2)&isnumeric(tmp2); 
     end
+    igood = igood1&igood2;
     parnames = allfields(find(igood));
  case 2
     parnames = {'wup_param', ...
