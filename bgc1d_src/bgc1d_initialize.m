@@ -31,7 +31,7 @@
 %bgc.nt = 120 * 365;% Simulation length in timesteps
 %bgc.dt = 1.0 * 86400; % timestep in seconds bgc.hist =  500; 
 %bgc.hist = 3 * 365; % save a snapshot every X timesteps
- bgc.nt = 160*365;% Simulation length in timesteps
+ bgc.nt = 500*365;% Simulation length in timesteps
  bgc.dt = 86400; % timestep in seconds bgc.hist =  500; 
  bgc.hist = 365*10; % save a snapshot every X timesteps
  bgc.hist_verbose = true; % prompts a message at each saving timestep

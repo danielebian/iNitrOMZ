@@ -2,10 +2,10 @@
 *swp
 *swo
 
-Data/
-saveOut/
-optimOut/
-restart/
+Data/*
+saveOut/*
+optimOut/*
+restart/*
 
 comet/*.joblog
 comet/*.out
