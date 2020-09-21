@@ -2,7 +2,7 @@ function bgc = bgc1d_initboundary(bgc)
 
  switch bgc.region
  case 'ETNP'
-    bgc.poc_flux_top = -6.0/86400;   	% Bry cond. for top POC Flux            (mmolC/m2/s)
+    bgc.poc_flux_top = -6.0/86400*1.00; % Bry cond. for top POC Flux            (mmolC/m2/s)
     bgc.o2_top  = 203.65;            	% Bry cond. for surface Oxygen          (mmolO2/m3)
     bgc.o2_bot  = 33.0;              	% Bry cond. for deep Oxygen             (mmolO2/m3)
     bgc.no3_top = 0.21;           	% Bry cond. for surface Nitrate         (mmolNO3/m3)
@@ -29,7 +29,7 @@ function bgc = bgc1d_initboundary(bgc)
     bgc.d15n2oB_top = -3.0;         	% Bry cond. for surface delN2O-B        (permil)
     bgc.d15n2oB_bot = -2.6;        	% Bry cond. for deep delN2O-B           (permil)	
  case 'ETSP'
-    bgc.poc_flux_top = -7.5/86400;	% Bry cond. for top POC Flux            (mmolC/m2/s)
+    bgc.poc_flux_top = -7.5/86400*1.0;	% Bry cond. for top POC Flux            (mmolC/m2/s)
     bgc.o2_top  = 215;              	% Bry cond. for surface Oxygen          (mmolO2/m3)
     bgc.o2_bot  = 77.; 			% Bry cond. for deep Oxygen             (mmolO2/m3)
     bgc.no3_top = 2.813;            	% Bry cond. for surface Nitrate         (mmolNO3/m3)

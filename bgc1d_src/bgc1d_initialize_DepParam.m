@@ -32,6 +32,9 @@
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  if bgc.FromRestart == 1
+    if bgc.hist_verbose
+       disp(['Loading restart : ' bgc.root '/restart/' bgc.RestartFile]);
+    end
     load([bgc.root,'/restart/',bgc.RestartFile]);
     bgc.rst=rst;
  end

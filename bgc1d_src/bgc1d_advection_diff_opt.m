@@ -12,11 +12,11 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
  % Initialize solutions
- sol   = zeros(bgc.nt/bgc.hist,bgc.nvar,bgc.nz);
- sadv  = zeros(bgc.nt/bgc.hist,bgc.nvar,bgc.nz);
- sdiff = zeros(bgc.nt/bgc.hist,bgc.nvar,bgc.nz);
- ssms  = zeros(bgc.nt/bgc.hist,bgc.nvar,bgc.nz);
- srest = zeros(bgc.nt/bgc.hist,bgc.nvar,bgc.nz);
+ sol   = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
+ sadv  = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
+ sdiff = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
+ ssms  = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
+ srest = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
 
  poc = zeros(2,bgc.nz);
  o2  = zeros(2,bgc.nz);
@@ -235,20 +235,22 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
     end
   
     %%%% Do restoring    
-    restoring = bgc1d_restoring(bgc,tr);
-    o2(2,2:end-1)  = o2(2,2:end-1)  + restoring.o2(2:end-1)  .* bgc.dt;
-    no3(2,2:end-1) = no3(2,2:end-1) + restoring.no3(2:end-1) .* bgc.dt;
-    no2(2,2:end-1) = no2(2,2:end-1) + restoring.no2(2:end-1) .* bgc.dt;
-    nh4(2,2:end-1) = nh4(2,2:end-1) + restoring.nh4(2:end-1) .* bgc.dt;
-    n2o(2,2:end-1) = n2o(2,2:end-1) + restoring.n2o(2:end-1) .* bgc.dt;
-    n2(2,2:end-1)  = n2(2,2:end-1)  + restoring.n2(2:end-1)  .* bgc.dt;
-    po4(2,2:end-1) = po4(2,2:end-1) + restoring.po4(2:end-1) .* bgc.dt;    
-    if bgc.RunIsotopes
-       i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + restoring.i15no3(2:end-1)  .*bgc.dt;
-       i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + restoring.i15no2(2:end-1)  .*bgc.dt;
-       i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + restoring.i15nh4(2:end-1)  .*bgc.dt;
-       i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + restoring.i15n2oA(2:end-1) .*bgc.dt;
-       i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + restoring.i15n2oB(2:end-1) .*bgc.dt;
+    if bgc.RestoringOff~=1
+       restoring = bgc1d_restoring(bgc,tr);
+       o2(2,2:end-1)  = o2(2,2:end-1)  + restoring.o2(2:end-1)  .* bgc.dt;
+       no3(2,2:end-1) = no3(2,2:end-1) + restoring.no3(2:end-1) .* bgc.dt;
+       no2(2,2:end-1) = no2(2,2:end-1) + restoring.no2(2:end-1) .* bgc.dt;
+       nh4(2,2:end-1) = nh4(2,2:end-1) + restoring.nh4(2:end-1) .* bgc.dt;
+       n2o(2,2:end-1) = n2o(2,2:end-1) + restoring.n2o(2:end-1) .* bgc.dt;
+       n2(2,2:end-1)  = n2(2,2:end-1)  + restoring.n2(2:end-1)  .* bgc.dt;
+       po4(2,2:end-1) = po4(2,2:end-1) + restoring.po4(2:end-1) .* bgc.dt;    
+       if bgc.RunIsotopes
+          i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + restoring.i15no3(2:end-1)  .*bgc.dt;
+          i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + restoring.i15no2(2:end-1)  .*bgc.dt;
+          i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + restoring.i15nh4(2:end-1)  .*bgc.dt;
+          i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + restoring.i15n2oA(2:end-1) .*bgc.dt;
+          i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + restoring.i15n2oB(2:end-1) .*bgc.dt;
+       end
     end
       
     %%%% old equals new  

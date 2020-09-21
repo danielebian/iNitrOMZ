@@ -12,7 +12,8 @@
  end
  tmpvar = fields(tr);
  for indf=1:length(tmpvar)
- 	tr.(tmpvar{indf})(tr.(tmpvar{indf})<0)=0;
+        tmp = max(0,tr.(tmpvar{indf}));
+ 	tr.(tmpvar{indf}) = tmp;
  end
 
  % % % % % % % % % % % %
@@ -61,10 +62,10 @@
     Anammox = bgc.KAx .* mm1(tr.nh4,bgc.KNH4Ax) .* mm1(tr.no2,bgc.KNO2Ax) .* fexp(tr.o2,bgc.KO2Ax);
        
     % Non-isotope case
-    bgc.r14no3 = 1.0;
-    bgc.r14no2 = 1.0;
-    bgc.r14nh4 = 1.0;
-    bgc.r14n2o = 1.0;
+   %bgc.r14no3 = 1.0;
+   %bgc.r14no2 = 1.0;
+   %bgc.r14nh4 = 1.0;
+   %bgc.r14n2o = 1.0;
 
  else
     tr.i15n2o = tr.i15n2oA+tr.i15n2oB;
