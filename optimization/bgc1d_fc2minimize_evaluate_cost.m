@@ -11,6 +11,7 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
  tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018.mat']);
  % INTERPOLATED (SMOOTH) DATA:
 %tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018_interpol.mat']);
+
  Data.name = {'o2' 'no3' 'poc' 'po4' 'n2o' 'nh4' 'no2' 'n2','nstar'};
  Data = GA_data_init_opt(bgc,tmp.compilation_ETSP_gridded,Data.name);
 
@@ -31,11 +32,11 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
 %        bgc.varname = {'o2' 'no3' 'poc' 'po4' 'n2o' 'nh4' 'no2' 'n2' 'nstar'}
 %Data.weights =  	[2    0     0     1     0     0     0     0    0];	% Oxic optimization
 %Data.weights =  	[1    1     0     1     2     0     1     0    0];	% Anoxic Optimization-1
- Data.weights =  	[1    0     0     0.5   3     0     2.0   0    1];	% Anoxic Optimization-1
+ Data.weights =  	[2    0     0     1     6     0     3.0   0    2];	% Anoxic Optimization-1
  %			'nh4ton2o' 'noxton2o' 'no3tono2' 'anammox'
 %Data.rates.weights = 	[1          1          1          1];
 %Data.rates.weights = 	[0          0          0          0];
- Data.rates.weights = 	[0.5        0.5        0.5        0.5];
+ Data.rates.weights = 	[1          1          0          1];
  
  if sum(Data.rates.weights) > 0
     bgc = bgc1d_getrates(bgc, Data);
@@ -54,7 +55,7 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
  bgc.constraints_data = constraints_data.val;
  % If Needed, uses depth-dependent weights
  % The vertical profiles will be weighted by the selected weights
- idepth_weights = 1;
+ idepth_weights = 2;
  switch idepth_weights
  case 1
     depth_weights = ones(1,size(constraints_model,2));
@@ -90,6 +91,6 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
  % calculate mean of costs
  cost_pre(isnan(cost_pre)) = 0;
  % Need to add costs quadratically to prevent any one constraints to drift to far off.
- tcost = nansum((cost_pre.* constraints_data.weights').^2)/(nansum(Data.weights)+nansum(Data.rates.weights))^2;
+ tcost = nansum((cost_pre.* constraints_data.weights').^2)/(nansum(Data.weights)+nansum(Data.rates.weights));
  %tcost = nansum(cost_pre.* constraints_data.weights')/(nansum(Data.weights)+nansum(Data.rates.weights));
  

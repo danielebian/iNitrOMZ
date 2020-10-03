@@ -41,7 +41,7 @@
  case 2
     % Alternative formulation
     % Specifies timestep and hist length, and final time
-    bgc.dt = 2.0*86400; % timestep in seconds bgc.hist =  500; 
+    bgc.dt = 4.0*86400; % timestep in seconds bgc.hist =  500; 
     bgc.endTimey = 700; % end time of simulation (years)  
     bgc.histTimey = 20; % history timestep (years)
     bgc.nt = ceil(bgc.endTimey*(365*86400)/bgc.dt);
@@ -85,7 +85,7 @@
  % Choose constant (=0) or depth-dependent (=1) upwelling velocity
  % depth-dependent velocity requires a forcing file (set in bgc1d_initialize_DepParam.m)
  bgc.depthvar_wup = 0; 
- bgc.wup_param = 1.0 * 7.972e-8;% 1.8395e-7; % m/s  % note: 10 m/y = 3.1710e-07 m/s
+ bgc.wup_param = 2.0 * 7.972e-8;% 1.8395e-7; % m/s  % note: 10 m/y = 3.1710e-07 m/s
 
  %%%%%%%%%%% Diffusion %%%%%%%%%%
  bgc.Kv_param  = 1.701e-5; % constant vertical diffusion coefficient in m^2/s

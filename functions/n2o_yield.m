@@ -32,25 +32,29 @@
     %
     % %  % % % % % % % % % % % % % % % % % % % % % % % % % % % %
      
+    % DB 09/05/2020: Checked yields and corrected one mistake in Y.nn2o_nden_nh4
+    % Other than that, calculations here are ok, though unnecessarily convoluted
     % scale original params
-    a1 = bgc.Ji_a./100.0;
-    b1 = bgc.Ji_b./100.0;
+    a1 = bgc.Ji_a ./ 100.0;
+    b1 = bgc.Ji_b ./ 100.0;
     % get total yields
-    Y.nn2o_nh4 = (a1 + b1.*o2)./(a1+(b1+1).*o2);
-    Y.no2_nh4 = o2./(a1+(b1+1).*o2);
+    Y.nn2o_nh4 = (a1+b1.*o2)./(a1+(b1+1).*o2);
+    Y.no2_nh4  = o2./(a1+(b1+1).* o2);
     % get yields for Hydroxylamine pathway
     Y.nn2o_hx_nh4 = b1./(b1+1);
     % get yields for nitrifier-denitrification pathway
-    Y.nn2o_nden_nh4 = 1./((b1+1).*(1+(b1+1)./a1).*o2);
-    Y.no2_nden_nh4 = -Y.nn2o_nden_nh4; % nh4->no2->n2o
-    Y.no2_hx_nh4 = 1-Y.nn2o_hx_nh4-Y.nn2o_nden_nh4;
+    Y.nn2o_nden_nh4 = 1./((b1+1).*(1+((b1+1)./a1).*o2));
+    Y.no2_nden_nh4  = - Y.nn2o_nden_nh4; % nh4->no2->n2o
+    % get yields for Hydroxylamine pathway by difference
+    Y.no2_hx_nh4    = 1 - Y.nn2o_hx_nh4 - Y.nn2o_nden_nh4;
+
     % Check mass balance
-    if abs(Y.nn2o_nh4+Y.no2_nh4-1) > 10^-10 
-       error('Mass imbalance');
-    end
-   
+    %if abs(Y.nn2o_nh4+Y.no2_nh4-1) > 10^-10 
+    %   error('Mass imbalance');
+    %end
+
  otherwise
     error(['N2O yield case : ' bgc.n2o_yield ' not found']);
  end
 
- end	% End function
+ end

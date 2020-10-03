@@ -8,6 +8,7 @@ function bgc1d_plot(bgc,varargin)
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Default arguments
+ A.data = 1;
 %A.var = 'o2';
  A.var = {'o2','po4','no3','no2','nh4','n2o','nstar','n2','poc'};
  A.fig = 0;
@@ -46,7 +47,7 @@ function bgc1d_plot(bgc,varargin)
     % ------------------------------------------------
     % Plots Variable
     subplot(sp1,sp2,indv)
-    if isfield(bgc,['Data_' varname])
+    if A.data & isfield(bgc,['Data_' varname])
        s=scatter(var_data(~isnan(var_data)), bgc.zgrid(~isnan(var_data)),'b');
        s.LineWidth = 0.6;
        s.MarkerEdgeColor = 'k';

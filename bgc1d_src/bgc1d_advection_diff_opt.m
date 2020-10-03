@@ -252,6 +252,10 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
           i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + restoring.i15n2oB(2:end-1) .*bgc.dt;
        end
     end
+
+   %if any(isnan([o2(2,:),no3(2,:),no2(2,:),nh4(2,:),n2o(2,:),n2(2,:),po4(2,:)]));
+   %   keyboard
+   %end
       
     %%%% old equals new  
     o2(1,:)  = o2(2,:);
