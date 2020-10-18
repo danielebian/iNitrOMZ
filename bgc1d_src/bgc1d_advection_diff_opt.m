@@ -115,11 +115,11 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
  % terms for the numerical advection-diffusion solver. For time-dependent w and Kv
  % move these terms inside the time loop
  alpha = bgc.wup(2:end-1) * bgc.dt / (2*bgc.dz);
- beta = bgc.dt / (2.*bgc.dz) * (bgc.wup(3:end)-bgc.wup(1:end-2));
+ beta  = bgc.dt / (2.*bgc.dz) * (bgc.wup(3:end)-bgc.wup(1:end-2));
  gamma = bgc.Kv(2:end-1) * bgc.dt / (bgc.dz)^2;
- coeff1 = 1+beta-2*gamma;
- coeff2 = alpha+gamma;
- coeff3 = -alpha+gamma;
+ coeff1 = 1 + beta - 2*gamma;
+ coeff2 =     alpha +  gamma;
+ coeff3 =   - alpha +  gamma;
 
  for indt=1:bgc.nt
     %%%% Now calculate Explicit tracer concentrations
@@ -209,47 +209,50 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
     
     % % %  Update steady state POC sinking flux
     fpoc_out(2,1) = bgc.poc_flux_top;
+
     for indz=1:bgc.nz
        % Explicit sinking
        %fpoc_out(2,indz+1) = fpoc_out(2,indz)*(1.0 - bgc.dz*sms.kpoc(indz)/bgc.wsink(indz));
        % Implicit sinking
        fpoc_out(2,indz+1) = fpoc_out(2,indz)/(1.0 + bgc.dz*sms.kpoc(indz)/bgc.wsink(indz));
        % Updates POC, by mass conservation: remin = divergence of flux
-       poc(2,indz)=(fpoc_out(2,indz)-fpoc_out(2,indz+1))/(bgc.dz*sms.kpoc(indz));
+       %poc(2,indz)=(fpoc_out(2,indz)-fpoc_out(2,indz+1))/(bgc.dz*sms.kpoc(indz));
     end       
+    % Use matrix calculation to perform POC flux update (faster)
+    poc(2,:) = (fpoc_out(2,1:bgc.nz)-fpoc_out(2,2:bgc.nz+1))./(bgc.dz*sms.kpoc);
 
     %%%% Do sources minus sinks
-    o2(2,2:end-1)  = o2(2,2:end-1)  + sms.o2(2:end-1)  .*bgc.dt;
-    no3(2,2:end-1) = no3(2,2:end-1) + sms.no3(2:end-1) .*bgc.dt;
-    no2(2,2:end-1) = no2(2,2:end-1) + sms.no2(2:end-1) .*bgc.dt;
-    nh4(2,2:end-1) = nh4(2,2:end-1) + sms.nh4(2:end-1) .*bgc.dt;
-    n2o(2,2:end-1) = n2o(2,2:end-1) + sms.n2o(2:end-1) .*bgc.dt;
-    n2(2,2:end-1)  = n2(2,2:end-1)  + sms.n2(2:end-1)  .*bgc.dt;
-    po4(2,2:end-1) = po4(2,2:end-1) + sms.po4(2:end-1) .*bgc.dt;
+    o2(2,2:end-1)  = o2(2,2:end-1)  + sms.o2(2:end-1)  * bgc.dt;
+    no3(2,2:end-1) = no3(2,2:end-1) + sms.no3(2:end-1) * bgc.dt;
+    no2(2,2:end-1) = no2(2,2:end-1) + sms.no2(2:end-1) * bgc.dt;
+    nh4(2,2:end-1) = nh4(2,2:end-1) + sms.nh4(2:end-1) * bgc.dt;
+    n2o(2,2:end-1) = n2o(2,2:end-1) + sms.n2o(2:end-1) * bgc.dt;
+    n2(2,2:end-1)  = n2(2,2:end-1)  + sms.n2(2:end-1)  * bgc.dt;
+    po4(2,2:end-1) = po4(2,2:end-1) + sms.po4(2:end-1) * bgc.dt;
     if bgc.RunIsotopes
-       i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + sms.i15no3(2:end-1)  .* bgc.dt;
-       i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + sms.i15no2(2:end-1)  .* bgc.dt;
-       i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + sms.i15nh4(2:end-1)  .* bgc.dt;
-       i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + sms.i15n2oA(2:end-1) .* bgc.dt;
-       i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + sms.i15n2oB(2:end-1) .* bgc.dt;
+       i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + sms.i15no3(2:end-1)  * bgc.dt;
+       i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + sms.i15no2(2:end-1)  * bgc.dt;
+       i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + sms.i15nh4(2:end-1)  * bgc.dt;
+       i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + sms.i15n2oA(2:end-1) * bgc.dt;
+       i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + sms.i15n2oB(2:end-1) * bgc.dt;
     end
   
     %%%% Do restoring    
     if bgc.RestoringOff~=1
        restoring = bgc1d_restoring(bgc,tr);
-       o2(2,2:end-1)  = o2(2,2:end-1)  + restoring.o2(2:end-1)  .* bgc.dt;
-       no3(2,2:end-1) = no3(2,2:end-1) + restoring.no3(2:end-1) .* bgc.dt;
-       no2(2,2:end-1) = no2(2,2:end-1) + restoring.no2(2:end-1) .* bgc.dt;
-       nh4(2,2:end-1) = nh4(2,2:end-1) + restoring.nh4(2:end-1) .* bgc.dt;
-       n2o(2,2:end-1) = n2o(2,2:end-1) + restoring.n2o(2:end-1) .* bgc.dt;
-       n2(2,2:end-1)  = n2(2,2:end-1)  + restoring.n2(2:end-1)  .* bgc.dt;
-       po4(2,2:end-1) = po4(2,2:end-1) + restoring.po4(2:end-1) .* bgc.dt;    
+       o2(2,2:end-1)  = o2(2,2:end-1)  + restoring.o2(2:end-1)  * bgc.dt;
+       no3(2,2:end-1) = no3(2,2:end-1) + restoring.no3(2:end-1) * bgc.dt;
+       no2(2,2:end-1) = no2(2,2:end-1) + restoring.no2(2:end-1) * bgc.dt;
+       nh4(2,2:end-1) = nh4(2,2:end-1) + restoring.nh4(2:end-1) * bgc.dt;
+       n2o(2,2:end-1) = n2o(2,2:end-1) + restoring.n2o(2:end-1) * bgc.dt;
+       n2(2,2:end-1)  = n2(2,2:end-1)  + restoring.n2(2:end-1)  * bgc.dt;
+       po4(2,2:end-1) = po4(2,2:end-1) + restoring.po4(2:end-1) * bgc.dt;    
        if bgc.RunIsotopes
-          i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + restoring.i15no3(2:end-1)  .*bgc.dt;
-          i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + restoring.i15no2(2:end-1)  .*bgc.dt;
-          i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + restoring.i15nh4(2:end-1)  .*bgc.dt;
-          i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + restoring.i15n2oA(2:end-1) .*bgc.dt;
-          i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + restoring.i15n2oB(2:end-1) .*bgc.dt;
+          i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + restoring.i15no3(2:end-1)  * bgc.dt;
+          i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + restoring.i15no2(2:end-1)  * bgc.dt;
+          i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + restoring.i15nh4(2:end-1)  * bgc.dt;
+          i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + restoring.i15n2oA(2:end-1) * bgc.dt;
+          i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + restoring.i15n2oB(2:end-1) * bgc.dt;
        end
     end
 

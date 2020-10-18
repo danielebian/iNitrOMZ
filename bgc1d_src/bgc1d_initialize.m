@@ -41,7 +41,7 @@
  case 2
     % Alternative formulation
     % Specifies timestep and hist length, and final time
-    bgc.dt = 4.0*86400; % timestep in seconds bgc.hist =  500; 
+    bgc.dt = 0.1*86400; % timestep in seconds bgc.hist =  500; 
     bgc.endTimey = 700; % end time of simulation (years)  
     bgc.histTimey = 20; % history timestep (years)
     bgc.nt = ceil(bgc.endTimey*(365*86400)/bgc.dt);

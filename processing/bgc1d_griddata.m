@@ -1,6 +1,6 @@
 function [GridData] = ToDensToVert2(data,zgrid,bgc)
 
- rres = (bgc.ztop -  bgc.zbottom)/bgc.npt;
+ rres  = (bgc.ztop - bgc.zbottom)/bgc.npt;
  rstep = (bgc.ztop - bgc.zbottom)/rres;
  Z = linspace(bgc.ztop,bgc.zbottom,rstep+1);
  clear tmp

@@ -1,6 +1,8 @@
-  function oxygen_function = f2o2(o2,ko2);
+  function fexp = fexp(lvar,klvar);
 
-   o2pos = max(0,o2);
-   oxygen_function = exp(-o2pos/ko2);
+  % If needed turn on following line to prevent less than zero variable values
+  % (note that this is not necessary since the same operation is done in sms)
+  %lvar = max(0,lvar);
+   fexp = exp(-lvar/klvar);
 
   end

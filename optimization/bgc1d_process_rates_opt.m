@@ -9,14 +9,14 @@ function Data1 = bgc1d_process_rates_opt(Data, bgc)
  depthox = bgc1d_detect_oxycline(bgc.sol(ind_o2,:),bgc);
 
  if isnan(depthox(1))
-    % No oxycline. Assign large values for rates in order to kickout these runs.
+    % No oxycline. Assign large values for rates in order to remove these runs.
     Data1.rates.val = nan(length(Data1.rates.name),length(bgc.zgrid));
     Data1.rates.val(:) = 10^23;
  else
     Data1.rates.val = nan(length(Data1.rates.name),length(bgc.zgrid));
     for v=1:length(Data1.rates.name)
-       Data1.rates.val(v,:) = bgc1d_griddata(Data1.rates.(Data1.rates.name{v}),Data1.rates.depth_from_oxicline+depthox(1), bgc) .* ...
-                              Data1.rates.convf(v); % convert from nM-N day^{-1} to mmol m^{-3} s^{-1}
+       grid_data = bgc1d_griddata(Data1.rates.(Data1.rates.name{v}),Data1.rates.depth_from_oxicline+depthox(1), bgc);
+       Data1.rates.val(v,:) = grid_data .* Data1.rates.convf(v); % convert from nM-N day^{-1} to mmol m^{-3} s^{-1}
     end
  end
 

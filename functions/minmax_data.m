@@ -6,5 +6,5 @@ function [norm_model norm_data] = minmax_data(constraints_model,constraints_data
         % Note: the max range (data or model) is given by: (mmax-mmin)
 
         % Removes minimum and normalizes by range
-	norm_model    = (constraints_model - mmin)./(mmax - mmin);
-	norm_data.val = (constraints_data.val - mmin)./(mmax - mmin);
+	norm_model = (constraints_model - mmin)./(mmax - mmin);
+	norm_data  = (constraints_data.val - mmin)./(mmax - mmin);

@@ -42,10 +42,10 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
     bgc = bgc1d_getrates(bgc, Data);
     constraints_model = vertcat(bgc.sol, bgc.rates);
     constraints_data = bgc1d_process_rates_opt(Data, bgc);
-    % set rate data in top 3 cells to 0
-    depthNoRates=50;
+    % Set rate data in top 50 m (3 cells) to 0
+    depthNoRates = 50;
     idx = find(-bgc.zgrid<=depthNoRates);
-    constraints_data.val(length(Data.weights)+1:end,idx)=nan;
+    constraints_data.val(length(Data.weights)+1:end,idx) = nan;
  else
     constraints_model = bgc.sol;
     constraints_data = Data;
@@ -53,8 +53,11 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
 
  bgc.constraints_model = constraints_model;
  bgc.constraints_data = constraints_data.val;
- % If Needed, uses depth-dependent weights
+ % If needed, uses depth-dependent weights
  % The vertical profiles will be weighted by the selected weights
+ % 1. No depth-dependent weigths (all depths weighted the same, weights=1)
+ % 2. Gaussian centered at OMZ core weighted up to 50% more
+ % 3. Double gaussian -- upper and lower weighted up to 50% more
  idepth_weights = 2;
  switch idepth_weights
  case 1
@@ -66,19 +69,17 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
     zmeanstd = 15;
     depth_weights = 0.5 + 0.5*exp(-(zlev-zmeanloc).^2/(2*zmeanstd^2));
  case 3 
-    % Weights a gaussian center on OMZ 50% more    
     % Weights a gaussian center on OMZ 50% more
     zlev = [1:size(constraints_model,2)];
     zmeanloc1 = 12;
+    zmeanloc2 = 35;
     zmeanstd1 = 4;
     zmeanstd2 = 10;
-    zmeanloc2 = 35;
-    depth_weights = 0.5 + 0.5*exp(-(zlev-zmeanloc1).^2/(2*zmeanstd1^2))+...
-                    0.5 + 0.5*exp(-(zlev-zmeanloc2).^2/(2*zmeanstd2^2));
+    depth_weights = 0.5 + 0.5*exp(-(zlev-zmeanloc1).^2/(2*zmeanstd1^2)) +...
+                        + 0.5*exp(-(zlev-zmeanloc2).^2/(2*zmeanstd2^2));
  otherwise
     error(['Need a valid option for depth weigths']);
  end
- % USES
 
 % *********************************************************************
 % -- Evaluation --

@@ -24,12 +24,12 @@
  [norm_model, norm_data] = minmax_data(constraints_model, constraints_data);
     
 % Get a RMSE of normalized variables
- err_sq = (norm_model - norm_data.val).^2;
- data_mask = double(~isnan(norm_data.val));
+ err_sq = (norm_model - norm_data).^2;
+ data_mask = double(~isnan(norm_data));
 
 % Calculates Cost, weighting square errors by depth-dependent weights
 %Cost = nansum(err_sq.*depth_weights,2)./nansum(data_mask.*depth_weights,2);
- w_err_sq = bsxfun(@times,err_sq,depth_weights);
+ w_err_sq    = bsxfun(@times,err_sq,depth_weights);
  w_data_mask = bsxfun(@times,data_mask,depth_weights);
  Cost = nansum(w_err_sq,2)./nansum(w_data_mask,2);
 
@@ -57,9 +57,9 @@
        plot(norm_model(vplot(indp),:),-zlev,'.b-','linewidth',3,'markersize',3)
        hold on
        if vplot(indp)<=length(constraints_data.name)
-          plot(norm_data.val(vplot(indp),:),-zlev,'.r-','linewidth',3,'markersize',3)
+          plot(norm_data(vplot(indp),:),-zlev,'.r-','linewidth',3,'markersize',3)
        else
-          plot(norm_data.val(vplot(indp),:),-zlev,'.r','markersize',15)
+          plot(norm_data(vplot(indp),:),-zlev,'.r','markersize',15)
        end
        if vplot(indp)<=length(constraints_data.name)
           title([constraints_data.name{vplot(indp)} ' : ' num2str(Cost(vplot(indp)))]);
