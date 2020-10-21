@@ -72,13 +72,11 @@
  % params : names of parameters to be varied
  % values : one vector of values for each parameter
  %---------------------
- Suite.params	= {'dt'};
 %Suite.params	= {'poc_flux_top'};
-%Suite.params	= {'wup_param','poc_flux_top'};
+ Suite.params	= {'wup_param','poc_flux_top'};
 
- Suite.dt = [2 4 8 16 32]*86400;
-%Suite.wup_param = [0.25 0.5 1 2 4]*7.972e-8;
-%Suite.poc_flux_top = [0.5:0.05:1.2]*(-7.5/86400); 
+ Suite.wup_param = [0.25 0.5 1 2 4]*7.972e-8;
+ Suite.poc_flux_top = [0.8:0.05:1.2]*(-7.5/86400); 
 
  %-------------------------------------------------------
  Suite.nparam = length(Suite.params);

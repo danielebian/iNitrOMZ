@@ -11,8 +11,11 @@
     bgc = bgc1d_initIso_update_r15n(bgc,tr);
  end
  tmpvar = fields(tr);
+ % For safety, reduces zero and negative variables to small value
+ % Technically non-zero is mostly important for POC
+ epsn = 1e-24;
  for indf=1:length(tmpvar)
-        tmp = max(0,tr.(tmpvar{indf}));
+        tmp = max(epsn,tr.(tmpvar{indf}));
  	tr.(tmpvar{indf}) = tmp;
  end
 

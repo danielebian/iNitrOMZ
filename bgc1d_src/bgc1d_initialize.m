@@ -33,25 +33,37 @@
  case 1
     % Original formulation - SYang
     % Specifies # timesteps, length and hist in timesteps 
-    bgc.nt = 250*365;% Simulation length in timesteps
-    bgc.dt = 2.0*86400; % timestep in seconds bgc.hist =  500; 
-    bgc.hist = 365*10; % save a snapshot every X timesteps
-    bgc.endTimey = bgc.nt*bgc.dt/(365*86400); % end time of simulation (years)
-    bgc.histTimey = bgc.hist*bgc.dt/(365*86400); % history timestep (years)
+    nt = 250*365;% Simulation length in timesteps
+    dt = 2.0*86400; % timestep in seconds bgc.hist =  500; 
+    hist = 365*10; % save a snapshot every X timesteps
+    endTimey = nt*dt/(365*86400); % end time of simulation (years)
+    histTimey = hist*dt/(365*86400); % history timestep (years)
+   % Creates dt and history vectors
+   [dt_vec time_vec hist_time_vec hist_time_ind hist_time] = bgc1d_process_time_stepping(dt,endTimey,histTimey);
  case 2
-    % Alternative formulation
-    % Specifies timestep and hist length, and final time
-    bgc.dt = 0.1*86400; % timestep in seconds bgc.hist =  500; 
-    bgc.endTimey = 700; % end time of simulation (years)  
-    bgc.histTimey = 20; % history timestep (years)
-    bgc.nt = ceil(bgc.endTimey*(365*86400)/bgc.dt);
-    bgc.hist = floor(bgc.histTimey*(365*86400)/bgc.dt); 
+    % Variable time-stepping
+    % Specifies time step bounds dn time steps
+    % dt : Timesteps to be used in each interval (years)
+    % endTimey : End of timestep intervals (seconds)
+    % Case (1): Constant time step
+   %dt       = [2.0]*86400;
+   %endTimey = [700];
+    % Case (2): Variable time step
+    dt       = [5.0 2.0 1.0 0.5]*86400;
+    endTimey = [650 670 690 700];
+    % Output time step
+    histTimey = 20; % history timestep (years)
+    [dt_vec time_vec hist_time_vec hist_time_ind hist_time] = bgc1d_process_time_stepping(dt,endTimey,histTimey);
  otherwise
     error('Timestep mode not found');
  end
+ bgc.dt_vec = dt_vec;
+ bgc.hist_time_ind = hist_time_ind;
+ bgc.hist_time_vec = hist_time_vec;
+ bgc.hist_time = hist_time;
+ bgc.nt = length(bgc.dt_vec);
+ bgc.nt_hist = length(bgc.hist_time_ind);
  bgc.hist_verbose = true; % prompts a message at each saving timestep
- bgc.nhist = floor(bgc.nt/bgc.hist);
- bgc.hist_time = linspace(bgc.dt*bgc.hist,bgc.nt*bgc.dt,bgc.nhist)/86400/365;
 
  bgc.FromRestart = 1; % initialize from restart? 1 yes, 0 no
  bgc.RestartFile = 'test_ETSP_F0p8_U2_restart_700.0.mat'; % restart file
@@ -88,7 +100,7 @@
  bgc.wup_param = 2.0 * 7.972e-8;% 1.8395e-7; % m/s  % note: 10 m/y = 3.1710e-07 m/s
 
  %%%%%%%%%%% Diffusion %%%%%%%%%%
- bgc.Kv_param  = 1.701e-5; % constant vertical diffusion coefficient in m^2/s
+ bgc.Kv_param  = 1.0 * 1.701e-5; % constant vertical diffusion coefficient in m^2/s
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %%%%% Boundary conditions %%%%%%

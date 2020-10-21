@@ -12,11 +12,11 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
  % Initialize solutions
- sol   = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
- sadv  = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
- sdiff = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
- ssms  = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
- srest = zeros(floor(bgc.nt/bgc.hist),bgc.nvar,bgc.nz);
+ sol   = zeros(bgc.nt_hist,bgc.nvar,bgc.nz);
+ sadv  = zeros(bgc.nt_hist,bgc.nvar,bgc.nz);
+ sdiff = zeros(bgc.nt_hist,bgc.nvar,bgc.nz);
+ ssms  = zeros(bgc.nt_hist,bgc.nvar,bgc.nz);
+ srest = zeros(bgc.nt_hist,bgc.nvar,bgc.nz);
 
  poc = zeros(2,bgc.nz);
  o2  = zeros(2,bgc.nz);
@@ -111,17 +111,21 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
  % % % % Start time-stepping  % % % %
  % % % % % % % % % % % % % % % % % %
  
- % For advection velocity and diffusion coefficient fixed in time, calculate here
- % terms for the numerical advection-diffusion solver. For time-dependent w and Kv
- % move these terms inside the time loop
- alpha = bgc.wup(2:end-1) * bgc.dt / (2*bgc.dz);
- beta  = bgc.dt / (2.*bgc.dz) * (bgc.wup(3:end)-bgc.wup(1:end-2));
- gamma = bgc.Kv(2:end-1) * bgc.dt / (bgc.dz)^2;
- coeff1 = 1 + beta - 2*gamma;
- coeff2 =     alpha +  gamma;
- coeff3 =   - alpha +  gamma;
-
  for indt=1:bgc.nt
+    
+    % Gets current timestep
+    dt = bgc.dt_vec(indt);
+
+    % For advection velocity and diffusion coefficient fixed in time, calculate here
+    % terms for the numerical advection-diffusion solver. For time-dependent w and Kv
+    % move these terms inside the time loop
+    alpha = bgc.wup(2:end-1) * dt / (2*bgc.dz);
+    beta  = dt / (2.*bgc.dz) * (bgc.wup(3:end)-bgc.wup(1:end-2));
+    gamma = bgc.Kv(2:end-1) * dt / (bgc.dz)^2;
+    coeff1 = 1 + beta - 2*gamma;
+    coeff2 =     alpha +  gamma;
+    coeff3 =   - alpha +  gamma;
+
     %%%% Now calculate Explicit tracer concentrations
     %%%% Top boundary conditions
     o2(2,1)  = bgc.o2_top;
@@ -222,37 +226,37 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
     poc(2,:) = (fpoc_out(2,1:bgc.nz)-fpoc_out(2,2:bgc.nz+1))./(bgc.dz*sms.kpoc);
 
     %%%% Do sources minus sinks
-    o2(2,2:end-1)  = o2(2,2:end-1)  + sms.o2(2:end-1)  * bgc.dt;
-    no3(2,2:end-1) = no3(2,2:end-1) + sms.no3(2:end-1) * bgc.dt;
-    no2(2,2:end-1) = no2(2,2:end-1) + sms.no2(2:end-1) * bgc.dt;
-    nh4(2,2:end-1) = nh4(2,2:end-1) + sms.nh4(2:end-1) * bgc.dt;
-    n2o(2,2:end-1) = n2o(2,2:end-1) + sms.n2o(2:end-1) * bgc.dt;
-    n2(2,2:end-1)  = n2(2,2:end-1)  + sms.n2(2:end-1)  * bgc.dt;
-    po4(2,2:end-1) = po4(2,2:end-1) + sms.po4(2:end-1) * bgc.dt;
+    o2(2,2:end-1)  = o2(2,2:end-1)  + sms.o2(2:end-1)  * dt;
+    no3(2,2:end-1) = no3(2,2:end-1) + sms.no3(2:end-1) * dt;
+    no2(2,2:end-1) = no2(2,2:end-1) + sms.no2(2:end-1) * dt;
+    nh4(2,2:end-1) = nh4(2,2:end-1) + sms.nh4(2:end-1) * dt;
+    n2o(2,2:end-1) = n2o(2,2:end-1) + sms.n2o(2:end-1) * dt;
+    n2(2,2:end-1)  = n2(2,2:end-1)  + sms.n2(2:end-1)  * dt;
+    po4(2,2:end-1) = po4(2,2:end-1) + sms.po4(2:end-1) * dt;
     if bgc.RunIsotopes
-       i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + sms.i15no3(2:end-1)  * bgc.dt;
-       i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + sms.i15no2(2:end-1)  * bgc.dt;
-       i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + sms.i15nh4(2:end-1)  * bgc.dt;
-       i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + sms.i15n2oA(2:end-1) * bgc.dt;
-       i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + sms.i15n2oB(2:end-1) * bgc.dt;
+       i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + sms.i15no3(2:end-1)  * dt;
+       i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + sms.i15no2(2:end-1)  * dt;
+       i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + sms.i15nh4(2:end-1)  * dt;
+       i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + sms.i15n2oA(2:end-1) * dt;
+       i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + sms.i15n2oB(2:end-1) * dt;
     end
   
     %%%% Do restoring    
     if bgc.RestoringOff~=1
        restoring = bgc1d_restoring(bgc,tr);
-       o2(2,2:end-1)  = o2(2,2:end-1)  + restoring.o2(2:end-1)  * bgc.dt;
-       no3(2,2:end-1) = no3(2,2:end-1) + restoring.no3(2:end-1) * bgc.dt;
-       no2(2,2:end-1) = no2(2,2:end-1) + restoring.no2(2:end-1) * bgc.dt;
-       nh4(2,2:end-1) = nh4(2,2:end-1) + restoring.nh4(2:end-1) * bgc.dt;
-       n2o(2,2:end-1) = n2o(2,2:end-1) + restoring.n2o(2:end-1) * bgc.dt;
-       n2(2,2:end-1)  = n2(2,2:end-1)  + restoring.n2(2:end-1)  * bgc.dt;
-       po4(2,2:end-1) = po4(2,2:end-1) + restoring.po4(2:end-1) * bgc.dt;    
+       o2(2,2:end-1)  = o2(2,2:end-1)  + restoring.o2(2:end-1)  * dt;
+       no3(2,2:end-1) = no3(2,2:end-1) + restoring.no3(2:end-1) * dt;
+       no2(2,2:end-1) = no2(2,2:end-1) + restoring.no2(2:end-1) * dt;
+       nh4(2,2:end-1) = nh4(2,2:end-1) + restoring.nh4(2:end-1) * dt;
+       n2o(2,2:end-1) = n2o(2,2:end-1) + restoring.n2o(2:end-1) * dt;
+       n2(2,2:end-1)  = n2(2,2:end-1)  + restoring.n2(2:end-1)  * dt;
+       po4(2,2:end-1) = po4(2,2:end-1) + restoring.po4(2:end-1) * dt;    
        if bgc.RunIsotopes
-          i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + restoring.i15no3(2:end-1)  * bgc.dt;
-          i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + restoring.i15no2(2:end-1)  * bgc.dt;
-          i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + restoring.i15nh4(2:end-1)  * bgc.dt;
-          i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + restoring.i15n2oA(2:end-1) * bgc.dt;
-          i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + restoring.i15n2oB(2:end-1) * bgc.dt;
+          i15no3(2,2:end-1)  = i15no3(2,2:end-1)  + restoring.i15no3(2:end-1)  * dt;
+          i15no2(2,2:end-1)  = i15no2(2,2:end-1)  + restoring.i15no2(2:end-1)  * dt;
+          i15nh4(2,2:end-1)  = i15nh4(2,2:end-1)  + restoring.i15nh4(2:end-1)  * dt;
+          i15n2oA(2,2:end-1) = i15n2oA(2,2:end-1) + restoring.i15n2oA(2:end-1) * dt;
+          i15n2oB(2,2:end-1) = i15n2oB(2,2:end-1) + restoring.i15n2oB(2:end-1) * dt;
        end
     end
 
@@ -279,10 +283,12 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
   
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%% Save history files and diagnostics  
-    if mod(indt,bgc.hist) == 0
-       iout = indt/bgc.hist; % current output timestep
+   %if mod(indt,bgc.hist) == 0
+    if any(bgc.hist_time_ind == indt)
+      %iout = indt/bgc.hist; % current output timestep
+       iout = find(bgc.hist_time_ind == indt);
        if bgc.hist_verbose
-          disp(['Saving step #' num2str(iout) '/' num2str(bgc.nhist)]);
+          disp(['Saving step #' num2str(iout) '/' num2str(bgc.nt_hist)]);
        end
        % Saving tracer field
        sol(iout,1,:) = o2(1,:);
@@ -374,7 +380,7 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
  % Save restart (bgc.SaveRestart == 1)
  if bgc.SaveRestart == 1
     rst = squeeze(sol(end,:,:));
-    endtime = num2str(bgc.nt*bgc.dt/3600/24/365,'%5.1f');
+    endtime = num2str(bgc.hist_time_vec(end)/3600/24/365,'%5.1f');
     save([bgc.root, '/restart/', bgc.RunName,'_restart_',endtime,'.mat'],'rst');
  end	
 
