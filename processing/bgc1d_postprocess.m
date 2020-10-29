@@ -91,28 +91,41 @@
  [sms diag] = bgc1d_sourcesink(bgc,tr); 
  % Converts from (uM N/s) to (nM N/d)
  cnvrt = 1000*3600*24;
- bgc.RemOx      = diag.RemOx      * cnvrt;
- bgc.Ammox      = diag.Ammox      * cnvrt;
- bgc.Anammox    = diag.Anammox    * cnvrt;
- bgc.Nitrox     = diag.Nitrox     * cnvrt;
- bgc.RemDen     = diag.RemDen     * cnvrt;
- bgc.RemDen1    = diag.RemDen1    * cnvrt;
- bgc.RemDen2    = diag.RemDen2    * cnvrt;
- bgc.RemDen3    = diag.RemDen3    * cnvrt;
- bgc.Jnn2o_hx   = diag.Jnn2o_hx   * cnvrt;
- bgc.Jnn2o_nden = diag.Jnn2o_nden * cnvrt;
- bgc.Jno2_hx    = diag.Jno2_hx    * cnvrt;
- bgc.Jn2o_prod  = diag.Jn2o_prod  * cnvrt;
- bgc.Jn2o_cons  = diag.Jn2o_cons  * cnvrt;
- bgc.Jno2_prod  = diag.Jno2_prod  * cnvrt;
- bgc.Jno2_cons  = diag.Jno2_cons  * cnvrt;
- bgc.sms_n2o    = sms.n2o         * cnvrt;
+ bgc.remox      = diag.RemOx      * cnvrt;	% nM C/d
+ bgc.ammox      = diag.Ammox      * cnvrt;	% nM n/d
+ bgc.anammox    = 2.0 * diag.Anammox * cnvrt; 	% nM N/d : Units of N, not N2
+ bgc.nitrox     = diag.Nitrox     * cnvrt;	% nM n/d
+ bgc.remden     = diag.RemDen     * cnvrt;	% nM C/d
+ bgc.remden1    = diag.RemDen1    * cnvrt;	% nM C/d
+ bgc.remden2    = diag.RemDen2    * cnvrt;	% nM C/d
+ bgc.remden3    = diag.RemDen3    * cnvrt;	% nM C/d
+ bgc.jnn2o_hx   = diag.Jnn2o_hx   * cnvrt;	% nM N/d
+ bgc.jnn2o_nden = diag.Jnn2o_nden * cnvrt;	% nM N/d
+ bgc.jno2_hx    = diag.Jno2_hx    * cnvrt;	% nM N/d
+ bgc.jn2o_prod  = 2.0 * diag.Jn2o_prod * cnvrt;	% nM N/d : Units of N, not N2O
+ bgc.jn2o_cons  = 2.0 * diag.Jn2o_cons * cnvrt;	% nM N/d : Units of N, not N2O
+ bgc.jno2_prod  = diag.Jno2_prod  * cnvrt;	% nM n/d
+ bgc.jno2_cons  = diag.Jno2_cons  * cnvrt;	% nM n/d
+ bgc.sms_n2o    = sms.n2o         * cnvrt;	% nM n/d
 
- bgc.no2ton2o    = sms.n2oind.den2;   % nM N2O/d
- bgc.n2onetden   = 0.5 * bgc.NCden2 * bgc.RemDen2 - bgc.NCden3 * bgc.RemDen3;%    nM N2O/d
- bgc.nh4ton2o    = 0.5 * bgc.Jnn2o_hx + 0.5 * bgc.Jnn2o_nden;    %   nM N2O/d
- bgc.no3tono2    = bgc.NCden1 * bgc.RemDen1;%    nM N/d
- bgc.AnammoxFrac = 2*bgc.Anammox ./ (2.*bgc.Anammox + bgc.NCden2.*bgc.RemDen2 + bgc.Jn2o_prod.*2) .* 100;
+ % Other (for convenience)
+ bgc.nh4tono2 = bgc.jno2_hx;
+ bgc.no2tono3 = bgc.nitrox;
+ % Denitrification rates
+ bgc.no3tono2    = bgc.NCden1 * bgc.remden1;					% nM N/d
+ bgc.no2ton2o    =   2 * sms.n2oind.den2 * cnvrt;   				% nM N/d : Units of N, not N2O
+ bgc.n2oton2     = - 2 * sms.n2oind.den3 * cnvrt;   				% nM N/d : Units of N, not NO
+ bgc.noxton2o    = bgc.no2ton2o;                         			% nM N/d : Units of N, not N2O
+ % N2O formation
+ bgc.n2onetden   = bgc.NCden2 * bgc.remden2 - 2.0 * bgc.NCden3 * bgc.remden3;	% nM N/d : Units of N, not N2O
+ bgc.nh4ton2o    = bgc.jnn2o_hx + bgc.jnn2o_nden;    				% nM N/d : Units of N, not N2O
+ % Anammox fraction
+ bgc.AnammoxFrac = bgc.anammox ./ (bgc.anammox + bgc.NCden2.*bgc.remden2 + bgc.jn2o_prod); % non-dimensional
+
+ % Adds estimate of particle flux
+ % This is somewhat approximate because it's recalculated from POC
+ % And sinking speed at the tracer cells
+ bgc.poc_flux = -bgc.wsink .* bgc.poc*86400;					% mmol C/m2/d
 
  if bgc.RunIsotopes
     bgc.r15no3 = sms.r15no3;
@@ -122,3 +135,4 @@
     bgc.r15n2oA = bgc.i15n2oA./bgc.n2o;
     bgc.r15n2oB = bgc.i15n2oB./bgc.n2o;
  end
+

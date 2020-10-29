@@ -9,6 +9,7 @@ function bgc1d_plot(bgc,varargin)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Default arguments
  A.data = 1;
+ A.fact = 1;
 %A.var = 'o2';
  A.var = {'o2','po4','no3','no2','nh4','n2o','nstar','n2','poc'};
  A.fig = 0;
@@ -35,7 +36,7 @@ function bgc1d_plot(bgc,varargin)
 
     varname = A.var{indv};
    
-    var_plot = bgc.(varname); 
+    var_plot = bgc.(varname) * A.fact; 
     if isfield(bgc,['Data_' varname])
        var_data = bgc.(['Data_' varname]);
        var_range = [min([var_plot,var_data]) max([var_plot,var_data])];

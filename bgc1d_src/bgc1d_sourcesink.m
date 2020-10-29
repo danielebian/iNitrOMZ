@@ -23,23 +23,24 @@
  % % % % J-OXIC  % % % %
  % % % % % % % % % % % %
     %----------------------------------------------------------------------
-    % (1) Oxic Respiration rate (C-units):
+    % (1) Oxic Respiration rate (C-units, mmolC/m3/s):
     %----------------------------------------------------------------------
     RemOx = bgc.Krem .* mm1(tr.o2,bgc.KO2Rem) .* tr.poc;
 
  if ~bgc.RunIsotopes 
     %----------------------------------------------------------------------
-    % (2) Ammonium oxidation (molN-units):
+    % (2) Ammonium oxidation (molN-units, mmolN/m3/s):
     %----------------------------------------------------------------------
     Ammox = bgc.KAo .*  mm1(tr.o2,bgc.KO2Ao) .*  mm1(tr.nh4,bgc.KNH4Ao) ;
 
     %----------------------------------------------------------------------
-    % (3) Nitrite oxidation (molN-units):
+    % (3) Nitrite oxidation (molN-units, mmolN/m3/s):
     %----------------------------------------------------------------------
     Nitrox = bgc.KNo .*  mm1(tr.o2,bgc.KO2No) .* mm1(tr.no2,bgc.KNO2No);
 
     %----------------------------------------------------------------------
-    % (4) N2O and NO2 production by ammox and nitrifier-denitrif (molN-units): 
+    % (4) N2O and NO2 production by ammox and nitrifier-denitrif 
+    %  Yields: nondimensional. Units of N, not N2O (molN-units, mmolN/m3/s): 
     %----------------------------------------------------------------------
     Y = n2o_yield(tr.o2, bgc);
     % via NH2OH
@@ -53,14 +54,15 @@
     % % % % % % % % % % % %
 
     %----------------------------------------------------------------------
-    % (5) Denitrification (C-units)
+    % (5) Denitrification (C-units, mmolC/m3/s)
     %----------------------------------------------------------------------
     RemDen1 = bgc.KDen1 .* mm1(tr.no3,bgc.KNO3Den1) .* fexp(tr.o2,bgc.KO2Den1) .* tr.poc;
     RemDen2 = bgc.KDen2 .* mm1(tr.no2,bgc.KNO2Den2) .* fexp(tr.o2,bgc.KO2Den2) .* tr.poc;
     RemDen3 = bgc.KDen3 .* mm1(tr.n2o,bgc.KN2ODen3) .* fexp(tr.o2,bgc.KO2Den3) .* tr.poc;
 
     %----------------------------------------------------------------------
-    % (6) Anaerobic ammonium oxidation (molN-units):
+    % (6) Anaerobic ammonium oxidation (molN2-units, mmolN2/m3/s):
+    % Note Anammox is in units of N2, i.e. 2 x mmolN/m3/s
     %----------------------------------------------------------------------
     Anammox = bgc.KAx .* mm1(tr.nh4,bgc.KNH4Ax) .* mm1(tr.no2,bgc.KNO2Ax) .* fexp(tr.o2,bgc.KO2Ax);
        
@@ -71,19 +73,20 @@
    %bgc.r14n2o = 1.0;
 
  else
-    tr.i15n2o = tr.i15n2oA+tr.i15n2oB;
+    tr.i15n2o = tr.i15n2oA + tr.i15n2oB;
     %----------------------------------------------------------------------
-    % (2) Ammonium oxidation (molN-units):
+    % (2) Ammonium oxidation (molN-units, mmolN/m3/s):
     %----------------------------------------------------------------------
     Ammox = bgc.KAo .*  mm1(tr.o2,bgc.KO2Ao) .*  mm1_Iso(tr.nh4,tr.i15nh4,bgc.KNH4Ao) ;
 
     %----------------------------------------------------------------------
-    % (3) Nitrite oxidation (molN-units):
+    % (3) Nitrite oxidation (molN-units, mmolN/m3/s):
     %----------------------------------------------------------------------
     Nitrox = bgc.KNo .*  mm1(tr.o2,bgc.KO2No) .* mm1_Iso(tr.no2,tr.i15no2,bgc.KNO2No);
 
     %----------------------------------------------------------------------
-    % (4) N2O and NO2 production by ammox and nitrifier-denitrif (molN-units):
+    % (4) N2O and NO2 production by ammox and nitrifier-denitrif 
+    %  Yields: nondimensional. Units of N, not N2O (molN-units, mmolN/m3/s): 
     %----------------------------------------------------------------------
     Y = n2o_yield(tr.o2, bgc);
     % via NH2OH (hydroxilamine pathway)
@@ -97,14 +100,15 @@
     % % % % % % % % % % % %
 
     %----------------------------------------------------------------------
-    % (5) Denitrification (C-units)
+    % (5) Denitrification (C-units, mmolC/m3/s)
     %----------------------------------------------------------------------
     RemDen1 = bgc.KDen1 .* mm1_Iso(tr.no3,tr.i15no3,bgc.KNO3Den1) .* fexp(tr.o2,bgc.KO2Den1) .* tr.poc;
     RemDen2 = bgc.KDen2 .* mm1_Iso(tr.no2,tr.i15no2,bgc.KNO2Den2) .* fexp(tr.o2,bgc.KO2Den2) .* tr.poc;
     RemDen3 = bgc.KDen3 .* mm1_Iso(tr.n2o,tr.i15n2o,bgc.KN2ODen3) .* fexp(tr.o2,bgc.KO2Den3) .* tr.poc;
 
     %----------------------------------------------------------------------
-    % (6) Anaerobic ammonium oxidation (molN-units):
+    % (6) Anaerobic ammonium oxidation (molN2-units, mmolN2/m3/s):
+    % Note: Anammox is in units of N2, i.e. 2 x mmolN/m3/s
     %----------------------------------------------------------------------
     Anammox = bgc.KAx .* mm1_Iso(tr.nh4,tr.i15nh4,bgc.KNH4Ax) .* mm1_Iso(tr.no2,tr.i15no2,bgc.KNO2Ax) .* fexp(tr.o2,bgc.KO2Ax);
  end
@@ -115,7 +119,7 @@
  KRemDen3 = RemDen3./tr.poc;
 
  %----------------------------------------------------------------------
- % (8)  Calculate SMS for each tracer
+ % (8)  Calculate SMS for each tracer (mmol/m3/s)
  %---------------------------------------------------------------------- 
  sms.o2   =  -bgc.OCrem .* RemOx - 1.5.*Ammox - 0.5 .* Nitrox;
  sms.no3  =  Nitrox - bgc.NCden1 .* RemDen1; % .* bgc.r14no3;
@@ -123,9 +127,10 @@
  sms.po4  =  bgc.PCrem .* (RemOx + RemDen1 + RemDen2 + RemDen3);
  sms.nh4  =  bgc.NCrem .* (RemOx + RemDen1 + RemDen2 + RemDen3) - (Jnn2o_hx + Jno2_hx + Jnn2o_nden) - Anammox; % .* bgc.r14nh4;
  sms.no2  =  Jno2_hx + bgc.NCden1 .* RemDen1 - bgc.NCden2 .* RemDen2 - Anammox - Nitrox; % .* bgc.r14no2;
+ % N2 (mmol N2/m3/s, units of N2, not N)
  sms.n2   =  bgc.NCden3 .* RemDen3 + Anammox;
  sms.kpoc = -(KRemOx + KRemDen1 + KRemDen2 + KRemDen3);
- % N2O individual SMSs
+ % N2O individual SMSs (mmol N2O/m3/s, units of N2O, not N)
  sms.n2oind.ammox = 0.5 .* Jnn2o_hx;
  sms.n2oind.nden  = 0.5 .* Jnn2o_nden;
  sms.n2oind.den2  = 0.5 .* bgc.NCden2 .* RemDen2;
@@ -134,24 +139,24 @@
  sms.n2o = (sms.n2oind.ammox + sms.n2oind.nden + sms.n2oind.den2 + sms.n2oind.den3);
 
  %---------------------------------------------------------------------- 
- % (9) Here adds diagnostics,  to be handy when needed
+ % (9) Here adds diagnostics, to be handy when needed
  %---------------------------------------------------------------------- 
- diag.RemOx   = RemOx;
- diag.Ammox   = Ammox;
- diag.Nitrox  = Nitrox;
- diag.Anammox = Anammox;
- diag.RemDen1 = RemDen1;
- diag.RemDen2 = RemDen2;
- diag.RemDen3 = RemDen3;
- diag.RemDen  = RemDen1 + RemDen2 + RemDen3;
- diag.Jno2_hx = Jno2_hx;
- diag.Jnn2o_hx   = Jnn2o_hx;
- diag.Jnn2o_nden = Jnn2o_nden;
- diag.Jn2o_prod = sms.n2oind.ammox + sms.n2oind.nden + sms.n2oind.den2;
- diag.Jn2o_cons = sms.n2oind.den3;
- diag.Jno2_prod = Jno2_hx + bgc.NCden1 .* RemDen1;
- diag.Jno2_cons = - bgc.NCden2 .* RemDen2 - Anammox - Nitrox;
- diag.kpoc = -(RemDen1 -RemDen2-RemDen3-RemOx) ./ tr.poc;
+ diag.RemOx   = RemOx;		% mmolC/m3/s
+ diag.Ammox   = Ammox;		% mmolN/m3/s
+ diag.Nitrox  = Nitrox;		% mmolN/m3/s
+ diag.Anammox = Anammox;	% mmolN2/m3/s
+ diag.RemDen1 = RemDen1;	% mmolC/m3/s
+ diag.RemDen2 = RemDen2;	% mmolC/m3/s
+ diag.RemDen3 = RemDen3; 	% mmolC/m3/s
+ diag.RemDen  = RemDen1 + RemDen2 + RemDen3;	%mmolC/m3/s
+ diag.Jno2_hx = Jno2_hx;	% mmolN/m3/s
+ diag.Jnn2o_hx   = Jnn2o_hx;	% mmolN/m3/s
+ diag.Jnn2o_nden = Jnn2o_nden;	% mmolN/m3/s
+ diag.Jn2o_prod = sms.n2oind.ammox + sms.n2oind.nden + sms.n2oind.den2;	% mmolN2O/m3/s
+ diag.Jn2o_cons = sms.n2oind.den3;					% mmolN2O/m3/s
+ diag.Jno2_prod = Jno2_hx + bgc.NCden1 .* RemDen1;			% mmolN/m3/s
+ diag.Jno2_cons = - bgc.NCden2 .* RemDen2 - Anammox - Nitrox;		% mmolN/m3/s
+ diag.kpoc = -(RemDen1 -RemDen2-RemDen3-RemOx) ./ tr.poc;		% 1/s
  %---------------------------------------------------------------------- 
 
  if bgc.RunIsotopes

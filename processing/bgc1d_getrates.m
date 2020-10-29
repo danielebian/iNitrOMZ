@@ -31,12 +31,29 @@ function bgc = bgc1d_getrates(bgc,Data)
 
  [sms diag] =  bgc1d_sourcesink(bgc,tr);
 
+ % NEW:
+ % Converts from (uM N/s) to (nM N/d)
+ % For safety recalculates and keeps rate into temporary structure "tmp"
+ cnvrt = 1000*3600*24;
+ tmp.nh4tono2   =       diag.Ammox   * cnvrt;      	% nM n/d
+ tmp.anammox    = 2.0 * diag.Anammox * cnvrt;   	% nM N/d : Units of N, not N2
+ tmp.no2tono3   =       diag.Nitrox  * cnvrt;      	% nM n/d
+ tmp.nh4ton2o   = (diag.Jnn2o_hx + diag.Jnn2o_nden) * cnvrt; 	% nM N/d : Units of N, not N2O
+ tmp.no3tono2   = bgc.NCden1 * diag.RemDen1 * cnvrt;	% nM n/d
+ tmp.no2ton2o   =   2 * sms.n2oind.den2 * cnvrt;	% nM N/d : Units of N, not N2O
+ tmp.n2oton2    = - 2 * sms.n2oind.den3 * cnvrt;	% nM N/d : Units of N, not N2
+ tmp.noxton2o   = tmp.no2ton2o;				% nM N/d : Units of N, not N2O
+
+ % Folds rates inside structure for easy handling in optimization
  bgc.rates = nan(length(Data.rates.name),length(bgc.zgrid));
- tmp.nh4tono2 = diag.Ammox;
- tmp.anammox  = diag.Anammox;
- tmp.nh4ton2o = sms.n2oind.ammox + sms.n2oind.nden;
- tmp.noxton2o = bgc.NCden2*diag.RemDen2;
- tmp.no3tono2 = bgc.NCden1*diag.RemDen1;
  for indr = 1:length(Data.rates.name)
     bgc.rates(indr,:) = tmp.(Data.rates.name{indr});
  end
+
+ % OLD:
+ % Note, from "bgc1d_sourcesink.m" rates are returned in mmol/m3/s
+%tmp.nh4tono2 = diag.Ammox;					% mmolN/m3/s 
+%tmp.anammox  = diag.Anammox					% mmolN2/m3/s
+%tmp.nh4ton2o = sms.n2oind.ammox + sms.n2oind.nden; 		% mmolN2O/m3/s
+%tmp.noxton2o = bgc.NCden2*diag.RemDen2;			% mmolN/m3/s
+%tmp.no3tono2 = bgc.NCden1*diag.RemDen1;			% mmolN/m3/s

@@ -38,13 +38,15 @@
  Cost(inan) = 1000;
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ % For plotting only
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Some diagnostics
  if (iplot>=1)
     % 'o2' 'no3' 'poc' 'po4' 'n2o' 'nh4' 'no2' 'n2' 'nstar'
     % 'nh4ton2o'  'noxton2o'  'no3tono2'  'anammox'
    %vplot = [1 2 4 5 7 9];
     vplot = [1 2 4 5 7 9 10 11 12 13];
-    spn = numSubplots(length(vplot))
+    spn = numSubplots(length(vplot));
     zlev = [1:size(constraints_model,2)];
     if (iplot==2)
        ff = figure('visible','off');
@@ -54,13 +56,13 @@
     for indp=1:length(vplot)
        %--------------------
        subplot(spn(1),spn(2),indp)
-       plot(norm_model(vplot(indp),:),-zlev,'.b-','linewidth',3,'markersize',3)
+       plot(norm_model(vplot(indp),:),-zlev,'-','color',[0.1 0.1 0.8],'linewidth',3,'markersize',3)
        hold on
-       if vplot(indp)<=length(constraints_data.name)
-          plot(norm_data(vplot(indp),:),-zlev,'.r-','linewidth',3,'markersize',3)
-       else
-          plot(norm_data(vplot(indp),:),-zlev,'.r','markersize',15)
-       end
+      %if vplot(indp)<=length(constraints_data.name)
+      %   plot(norm_data(vplot(indp),:),-zlev,'.r-','linewidth',3,'markersize',3)
+      %else
+          plot(norm_data(vplot(indp),:),-zlev,'.','color',[0.9 0.1 0.1],'markersize',15)
+      %end
        if vplot(indp)<=length(constraints_data.name)
           title([constraints_data.name{vplot(indp)} ' : ' num2str(Cost(vplot(indp)))]);
        else
@@ -80,52 +82,52 @@
     end
  end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [p,n]=numSubplots(n)
-% function [p,n]=numSubplots(n)
-%
-% Purpose
-% Calculate how many rows and columns of sub-plots are needed to
-% neatly display n subplots. 
-%
-% Inputs
-% n - the desired number of subplots.     
-%  
-% Outputs
-% p - a vector length 2 defining the number of rows and number of
-%     columns required to show n plots.     
-% [ n - the current number of subplots. This output is used only by
-%       this function for a recursive call.]
-%
-%
-%
-% Example: neatly lay out 13 sub-plots
-% >> p=numSubplots(13)
-% p = 
-%     3   5
-% for i=1:13; subplot(p(1),p(2),i), pcolor(rand(10)), end 
-%
-%
-% Rob Campbell - January 2010
-
-
-while isprime(n) & n>4,
-    n=n+1;
-end
-p=factor(n);
-if length(p)==1
-    p=[1,p];
-    return
-end
-while length(p)>2
-    if length(p)>=4
-        p(1)=p(1)*p(end-1);
-        p(2)=p(2)*p(end);
-        p(end-1:end)=[];
-    else
-        p(1)=p(1)*p(2);
-        p(2)=[];
-    end
-    p=sort(p);
-end
-
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ function [p,n]=numSubplots(n)
+ % function [p,n]=numSubplots(n)
+ %
+ % Purpose
+ % Calculate how many rows and columns of sub-plots are needed to
+ % neatly display n subplots. 
+ %
+ % Inputs
+ % n - the desired number of subplots.     
+ %  
+ % Outputs
+ % p - a vector length 2 defining the number of rows and number of
+ %     columns required to show n plots.     
+ % [ n - the current number of subplots. This output is used only by
+ %       this function for a recursive call.]
+ %
+ %
+ %
+ % Example: neatly lay out 13 sub-plots
+ % >> p=numSubplots(13)
+ % p = 
+ %     3   5
+ % for i=1:13; subplot(p(1),p(2),i), pcolor(rand(10)), end 
+ %
+ %
+ % Rob Campbell - January 2010
+ 
+ 
+ while isprime(n) & n>4,
+     n=n+1;
+ end
+ p=factor(n);
+ if length(p)==1
+     p=[1,p];
+     return
+ end
+ while length(p)>2
+     if length(p)>=4
+         p(1)=p(1)*p(end-1);
+         p(2)=p(2)*p(end);
+         p(end-1:end)=[];
+     else
+         p(1)=p(1)*p(2);
+         p(2)=[];
+     end
+     p=sort(p);
+ end
+ 

@@ -23,7 +23,7 @@
  bgc.NCrem = d / a;                             % Ammonium to Carbon remineralization ratio (molNH4/molC)
  bgc.PCrem = 1 / a;                             % Phosphate to Carbon denitrification ratio (molNO3/molC)
  bgc.NCden1 = (Corg_e / HNO3toHNO2_e) / a;      % Nitrate to Carbon ratio during nitrate reduction (molNO3/molC)
- bgc.NCden2 = (Corg_e / HNO2toN2O_e) / a;       % Nitrite to Carbon ratio during nitrite reduction to n2o (molNO2/molC)
- bgc.NCden3 = (Corg_e / N2OtoN2_e) / a;         % n2o to Carbon ratio during N2O reduction (molN2O/molC)
+ bgc.NCden2 = (Corg_e / HNO2toN2O_e) / a;       % Nitrite to Carbon ratio during nitrite reduction to N2O (molNO2/molC)
+ bgc.NCden3 = (Corg_e / N2OtoN2_e) / a;         % N2O to Carbon ratio during N2O reduction (molN2O/molC)
 
  end

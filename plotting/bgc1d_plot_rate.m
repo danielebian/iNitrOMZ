@@ -1,4 +1,4 @@
-function bgc1d_plot(bgc,varargin)
+function bgc1d_plot_rate(bgc,rates,varargin)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % bgc1d ncycle v 1.0 - Simon Yang  - October 2017
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8,9 +8,10 @@ function bgc1d_plot(bgc,varargin)
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Default arguments
- A.data = 0;
-%A.var = 'o2';
- A.var = {'RemOx','Ammox','Nitrox','RemDen1','RemDen2','RemDen3','Anammox'};
+ A.data = 1;
+ A.fact = 1;
+ A.mode = 'oxycline'; % 'oxycline' references depth to oxycline depth (default)
+ A.var = {'ammox','nitrox','nh4ton2o','n2onetden','no3tono2','no2ton2o','n2oton2','anammox'};
  A.fig = 0;
  A.col = [0 0 0];
  A = parse_pv_pairs(A,varargin);
@@ -25,6 +26,40 @@ function bgc1d_plot(bgc,varargin)
  if ~iscell(A.var)
     A.var = {A.var};
  end  
+ A.var = lower(A.var);
+
+ % Renames some rates
+ indi = find(strcmp(A.var,'ammox'));
+ if ~isempty(indi);A.var{indi} = 'nh4tono2';end
+ indi = find(strcmp(A.var,'nitrox'));
+ if ~isempty(indi);A.var{indi} = 'no2tono3';end
+ indi = find(strcmp(A.var,'no2ton2o'));
+ if ~isempty(indi);A.var{indi} = 'noxton2o';end
+
+ % Process observational rates -- here assumes the coordinate is "depth_from_oxycline"
+ nan_vect = nan(1,bgc.nz);
+ % Adds in the rates from the data
+ if strcmp(A.mode,'oxycline')
+    % by referring them to the oxycline them  
+    ind_o2 = find(strcmp(bgc.varname,'o2'));
+    depthox = bgc1d_detect_oxycline(bgc.sol(ind_o2,:),bgc);
+    if ~isnan(depthox(1))
+       for indv=1:length(A.var)
+          if isfield(rates,A.var{indv})
+             grid_data = bgc1d_griddata(rates.(A.var{indv}),rates.depth_from_oxycline+depthox(1),bgc);
+             bgc.(['Data_' A.var{indv}]) = grid_data;
+          else
+             bgc.(['Data_' A.var{indv}]) = nan_vect;
+          end
+       end
+    end
+ else
+    for indv=1:length(A.var)
+       bgc.(['Data_' A.var{indv}]) = nan_vect;
+    end
+ end
+
+
 
  nvar = length(A.var);
  pp = numSubplots(nvar);
@@ -35,7 +70,7 @@ function bgc1d_plot(bgc,varargin)
 
     varname = A.var{indv};
    
-    var_plot = bgc.(varname); 
+    var_plot = bgc.(varname) .* A.fact; 
     if isfield(bgc,['Data_' varname])
        var_data = bgc.(['Data_' varname]);
        var_range = [min([var_plot,var_data]) max([var_plot,var_data])];

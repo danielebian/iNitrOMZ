@@ -222,7 +222,7 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
        % Updates POC, by mass conservation: remin = divergence of flux
        %poc(2,indz)=(fpoc_out(2,indz)-fpoc_out(2,indz+1))/(bgc.dz*sms.kpoc(indz));
     end       
-    % Use matrix calculation to perform POC flux update (faster)
+    % Use array calculation to perform POC flux update (faster)
     poc(2,:) = (fpoc_out(2,1:bgc.nz)-fpoc_out(2,2:bgc.nz+1))./(bgc.dz*sms.kpoc);
 
     %%%% Do sources minus sinks
