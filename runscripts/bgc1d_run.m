@@ -12,8 +12,8 @@ function bgc = bgc1d_run(varargin)
 %   % BGC/N-cycling params       -- bgc1d_initbgc_params.m
 %   % N-isotopes-cycling params  -- bgc1d_initIso_params.m
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-A.root = '/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/'; % root path
-A.rootdirs = {'bgc1d_src','Data','functions','processing','plotting','optimization','restart','runscripts'};
+%A.root = '/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/'; % root path
+%A.rootdirs = {'bgc1d_src','Data','functions','processing','plotting','optimization','restart','runscripts'};
 A.iPlot = 0;		% To plot output
 A.ParNames = {};	% Pass parameter names that need to be modified from default values
 A.ParVal = [];		% Pass parameter values, corresponding to ParNames
@@ -24,13 +24,14 @@ A = parse_pv_pairs(A, varargin);
 
 % initialize the model
  clear bgc;
+ bgc = struct;
 % here, specify iNitrOMZ root path ($PATHTOINSTALL/iNitrOMZ/)
- bgc.root = A.root;
- for indp=1:length(A.rootdirs);
-    addpath([bgc.root A.rootdirs{indp}]); % adds root to MATLAB's search paths
- end
+%bgc.root = A.root;
+%for indp=1:length(A.rootdirs);
+%   addpath([bgc.root A.rootdirs{indp}]); % adds root to MATLAB's search paths
+%end
 
- bgc.depparams = 1; % make sure dependent parameters are updated
+%bgc.depparams = 1; % make sure dependent parameters are updated
  bgc = bgc1d_initialize(bgc); 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %

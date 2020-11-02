@@ -1,16 +1,17 @@
 % Here, specify iNitrOMZ root path ($PATHTOINSTALL/iNitrOMZ/)
- bgc1d_root='/home/yangsi/project/NitrOMZ/iNitrOMZ_v6.0/';
+ bgc1d_root='/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/';
 % Adds CMAES subroutine:
- addpath('/home/yangsi/project/NitrOMZ/optimization/CMA_ES/');
+ addpath('/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/optimization/CMA_ES/');
 
 % Handles output directory
- OptName = 'Optimmay450';
- OptCase = 'Optimmay4'
- OptNameLong = 'Fix All oxic, Vary Anoxic parameters, NO interpolated data, cost function #3 w/t no rates (&no second square), 25k evaluations max';
- Optim.codeDir = [bgc1d_root,'comet/',OptCase,'/optimize_cmaes/'];
- addpath(Optim.codeDir);
-%OptName = 'Anox_Interp';
-%OptName = 'Oxic_cmaes';
+ OptName = 'Opt2_Oct_test1_rescaled';
+ OptCase = 'Test1';
+ OptNameLong = 'Fix baseline oxic param, vary Anoxic parameters, NO interpolated data, new rate constraints, *rescaled* by poc_flux ';
+% Proveds code paths:
+ bgc1d_paths_init;
+% When working on HPCS, move everything in one folder and specify path here:
+%Optim.codeDir = [bgc1d_root,'comet/',OptCase,'/optimize_cmaes/'];
+%addpath(Optim.codeDir);
  curdir = pwd;
  DateNow = bgc1d_getDate();
 % creates folder for CMAES output
@@ -18,13 +19,14 @@
  mkdir([bgc1d_root 'optimOut'],savedir);
  cd([bgc1d_root 'optimOut/' savedir]);
 
-% Parameters to tune:
+% Reference parameters
  remin = 0.08/86400;
 
+% Parameters to tune:
 % Matrix of parameters for optimization
 % Format: 	name 			min_value		max_value
  AllParam = {
-                'wup_param',            0.4e-7,                 8.0e-7;         ...
+%               'wup_param',            0.4e-7,                 8.0e-7;         ...
 %               'Kv_param',             0.5e-5,                 10e-5;          ...
 %               'b',                    -1.0,                   -0.5;           ...
 %               'poc_flux_top',         -15/86400,              -3/86400;       ...
@@ -46,7 +48,7 @@
                 'KNO2No',               0.01,                   1.0;            ...
                 'KNO3Den1',             0.01,                   1.0;              ...
                 'KNO2Den2',             0.01,                   1.0;            ...
-                'KN2ODen3',             80/1000,               200/1000;            ...
+                'KN2ODen3',             10/1000,               200/1000;            ...
                 'KNH4Ax',               0.1,                   1.0;            ...
                 'KNO2Ax',               0.1,                   1.0;            ...
                 };
@@ -82,7 +84,7 @@
  ParSigma = ParRange./ParNorm/sqrt(12);
 
 % Options
- optn.EvalParallel = '1';
+ optn.EvalParallel = 0;
  optn.LBounds = (ParMin - ParMin) ./ ParNorm;
  optn.UBounds = (ParMax - ParMin) ./ ParNorm;
  optn.MaxFunEvals = 25000;
@@ -90,10 +92,11 @@
 % Enables parallelization
 % Note, the # of cores should be the same as the population size of the CMAES: 
 % Popul size: 4 + floor(3*log(nPar))
- if strcmp(optn.EvalParallel,'1')
+ if optn.EvalParallel==1
     FunName = 'bgc1d_fc2minimize_cmaes_parallel';
     delete(gcp('nocreate'))
-    npar = 13;
+   %npar = 13;
+    npar = 4;
     ThisPool = parpool('local',npar);
  else
     FunName = 'bgc1d_fc2minimize_cmaes';
@@ -127,7 +130,7 @@
  Optim.cmaes.bestever = bestever; 
  Optim.RunTime = toc;
  % Runs and save best BGC1D parameters
- Optim.bgc = bgc_run_Optim(Optim);
+ Optim.bgc = bgc1d_run('ParNames',Optim.ParNames,'ParVal',Optim.ParOpt);
 
 % Save ga output using today's date
  save(['Optim_' DateNow '_' OptName '.mat'],'Optim');

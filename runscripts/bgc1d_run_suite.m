@@ -48,10 +48,10 @@
  % All Suite experiments will adopt these parameters
  % (use ['property',value] format)
  % NOTE: these should be variables not used as Suite Parameters
+ new_ParName = {};
+ new_ParVal = [];
 %new_ParName = {'dt','nt','hist'};
 %new_ParVal = [2*86400,250*365,365*10];
- new_ParName = {'dt','endTimey','histTimey'};
- new_ParVal = [2*86400,800,10];
 
  %-------------------------------------------------------
  % Define the suite of model runs
@@ -73,10 +73,12 @@
  % values : one vector of values for each parameter
  %---------------------
 %Suite.params	= {'poc_flux_top'};
- Suite.params	= {'wup_param','poc_flux_top'};
+ Suite.params	= {'wup_param','Kv_param','b','poc_flux_top'};
 
- Suite.wup_param = [0.25 0.5 1 2 4]*7.972e-8;
- Suite.poc_flux_top = [0.8:0.05:1.2]*(-7.5/86400); 
+ Suite.wup_param = [1.00 1.41 2.00 2.83 4.00]*7.972e-8;
+ Suite.Kv_param = [0.50 0.71 1.00 1.41 2.00]*1.701e-5;
+ Suite.b = - [0.65 0.70 0.75 0.80 0.85];
+ Suite.poc_flux_top = [0.50 0.71 1.00 1.41 2.00]*0.8*(-7.5/86400); 
 
  %-------------------------------------------------------
  Suite.nparam = length(Suite.params);
@@ -128,17 +130,12 @@
        end
     end
     % % % % % % % % % % % % % % % % % % % % 
-    if (1)
+    if (0)
        disp(['WARNING: updating any derived parameter']);
        % % % % % % % % % % % %
        % DERIVED PARAMETERS  %
        % % % % % % % % % % % %
-       % E.g.  the following allows flexible timestepping
-       Tsuite.nt = ceil(Tsuite.endTimey*(365*86400)/Tsuite.dt);
-       Tsuite.hist = floor(Tsuite.histTimey*(365*86400)/Tsuite.dt);
-       Tsuite.nhist = floor(Tsuite.nt/Tsuite.hist);
-       Tsuite.hist_time = linspace(Tsuite.dt*Tsuite.hist, ...
-                          Tsuite.nt*Tsuite.dt,Tsuite.nhist)/86400/365;
+       % E.g. change timestepping, etc.
        % E.g. Constraints: 
        % ... 
        % ... KDen1 + KDen2 + KDen3 = remin
@@ -179,5 +176,5 @@
  end
  eval([snewname ' = Suite;']);
  % Save the suite
- eval(['save ' snewname ' ' snewname ';']);
+ eval(['save ' snewname '.mat ' snewname ';']);
 

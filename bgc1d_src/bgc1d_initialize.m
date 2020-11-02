@@ -15,6 +15,7 @@
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  %%%%%%% User specific  %%%%%%%%%
+ bgc.root = '/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/'; 
  bgc.RunName = 'test_ETSP_F0p8_U2';
  bgc.region = 'ETSP';
  bgc.wup_profile = '/Data/vertical_CESM.mat'; % vertical velocities
@@ -43,8 +44,8 @@
  case 2
     % Variable time-stepping
     % Specifies time step bounds dn time steps
-    % dt : Timesteps to be used in each interval (years)
-    % endTimey : End of timestep intervals (seconds)
+    % dt : Timesteps to be used in each interval (seconds)
+    % endTimey : End of timestep intervals (years)
     % Case (1): Constant time step
    %dt       = [2.0]*86400;
    %endTimey = [700];
@@ -97,10 +98,10 @@
  % Choose constant (=0) or depth-dependent (=1) upwelling velocity
  % depth-dependent velocity requires a forcing file (set in bgc1d_initialize_DepParam.m)
  bgc.depthvar_wup = 0; 
- bgc.wup_param = 2.0 * 7.972e-8;% 1.8395e-7; % m/s  % note: 10 m/y = 3.1710e-07 m/s
+ bgc.wup_param = 4.0 * 7.972e-8;% 1.8395e-7; % m/s  % note: 10 m/y = 3.1710e-07 m/s
 
  %%%%%%%%%%% Diffusion %%%%%%%%%%
- bgc.Kv_param  = 1.0 * 1.701e-5; % constant vertical diffusion coefficient in m^2/s
+ bgc.Kv_param  = 2.0 * 1.701e-5; % constant vertical diffusion coefficient in m^2/s
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %%%%% Boundary conditions %%%%%%
@@ -111,7 +112,7 @@
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %%%%%%%%% BGC params %%%%%%%%%%%
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- % Initialize dependent parameters. (Turn off for optimization)
+ % Initialize dependent parameters. (This should be on for optimization)
  bgc.depparams = 1;
 
  % Initialize BGC/N-cycling parameters (modify in bgc1d_initbgc_params.m)
@@ -133,7 +134,7 @@
  %%%%%% On and off switches %%%%%%%%%
  % Restoring switches: 1 to restore, 0 for no restoring
  bgc.RestoringOff = 1;	% 1: turns restoring off for all variables
-			% (supersedes all following terms)
+			% (supersedes all following terms, used to speedup code)
  bgc.PO4rest = 0;
  bgc.NO3rest = 0;
  bgc.O2rest  = 0;

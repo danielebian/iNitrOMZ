@@ -73,10 +73,9 @@
     if iplot==2
        cost_pre = Cost;
        cost_pre(isnan(cost_pre)) = 0;
-       %tcost = nansum((cost_pre.* constraints_data.weights').^2)/(nansum(Data.weights)+nansum(Data.rates.weights))^2;
-       tcost = nansum(cost_pre.* constraints_data.weights')/(nansum(constraints_data.weights));
+       tcost = nansum(cost_pre.^2 .* constraints_data.weights')/nansum(constraints_data.weights);
        DateNow = bgc1d_getDate();
-       tmpname = [DateNow '_c_' num2str(tcost,3)];
+       tmpname = [DateNow '_c_' num2str(tcost,3) '.jpg'];
        mprint_fig('name',tmpname,'for','jpeg','sty','nor1','silent',1);
        close(ff);
     end

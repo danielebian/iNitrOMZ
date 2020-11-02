@@ -8,9 +8,9 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
 
  % Tracer data
  % RAW DATA:
- tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018.mat']);
+%tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018.mat']);
  % INTERPOLATED (SMOOTH) DATA:
-%tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018_interpol.mat']);
+ tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018_interpol.mat']);
 
  Data.name = {'o2' 'no3' 'poc' 'po4' 'n2o' 'nh4' 'no2' 'n2','nstar'};
  Data = GA_data_init_opt(bgc,tmp.compilation_ETSP_gridded,Data.name);
@@ -47,7 +47,7 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
 %Data.weights =  	[2    0     0     1     0     0     0     0    0];	% Oxic optimization
 %Data.weights =  	[1    1     0     1     2     0     1     0    0];	% Anoxic Optimization-1 - DB
 %Data.weights =  	[2    0     0     1     6     0     3     0    2];	% Anoxic Optimization-1 - SY
- Data.weights =  	[2    1     0     1     3     0     3     0    2];	% Anoxic Optimization-2 - DB
+ Data.weights =  	[2    1     0     1     8     0     4     0    4];	% Anoxic Optimization-2 - DB
  %			'nh4ton2o' 'noxton2o' 'no3tono2' 'anammox'
 %Data.rates.weights = 	[1          1          1          1];
 %Data.rates.weights = 	[0          0          0          0];
@@ -108,6 +108,7 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
  % calculate mean of costs
  cost_pre(isnan(cost_pre)) = 0;
  % Need to add costs quadratically to prevent any one constraints to drift to far off.
- tcost = nansum((cost_pre.* constraints_data.weights').^2)/(nansum(Data.weights)+nansum(Data.rates.weights));
+ tcost = nansum(cost_pre.^2 .* constraints_data.weights')/nansum(constraints_data.weights);
+ %tcost = nansum((cost_pre.* constraints_data.weights').^2)/(nansum(Data.weights)+nansum(Data.rates.weights));
  %tcost = nansum(cost_pre.* constraints_data.weights')/(nansum(Data.weights)+nansum(Data.rates.weights));
  

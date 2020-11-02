@@ -39,7 +39,7 @@ function Data1 = bgc1d_process_rates_opt(Data, bgc)
     % Adds estimate of particle flux
     % This is somewhat approximate because it's recalculated from POC
     % And sinking speed at the tracer cells
-    poc_flux = -bgc.wsink .* bgc.poc*86400; % mmol C/m2/d
+    poc_flux = -bgc.wsink .* bgc.poc * 86400; % mmol C/m2/d
     poc_factor = abs(poc_flux(indz))/Data.poc_flux_ref; 
     Data1.rates.val = Data1.rates.val * poc_factor;       
  end
