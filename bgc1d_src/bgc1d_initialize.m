@@ -50,8 +50,12 @@
    %dt       = [2.0]*86400;
    %endTimey = [700];
     % Case (2): Variable time step
-    dt       = [5.0 2.0 1.0 0.5]*86400;
-    endTimey = [650 670 690 700];
+   %dt       = [5.0 2.0 1.0 0.5]*86400;
+   %endTimey = [650 670 690 700];
+    dt       = [5.0 2.0 1.0 0.5 0.25 0.125]*86400;
+    endTimey = [650 670 690 695 698 700];
+   %dt       = 0.5*[5.0 2.0 1.0 0.5 0.25 0.125]*86400;
+   %endTimey = [350 370 390 395 398 400];
     % Output time step
     histTimey = 20; % history timestep (years)
     [dt_vec time_vec hist_time_vec hist_time_ind hist_time] = bgc1d_process_time_stepping(dt,endTimey,histTimey);
@@ -101,7 +105,13 @@
  bgc.wup_param = 4.0 * 7.972e-8;% 1.8395e-7; % m/s  % note: 10 m/y = 3.1710e-07 m/s
 
  %%%%%%%%%%% Diffusion %%%%%%%%%%
+ bgc.depthvar_Kv = 1; 
  bgc.Kv_param  = 2.0 * 1.701e-5; % constant vertical diffusion coefficient in m^2/s
+ % For sigmoidal Kv, use the following parameters
+ bgc.Kv_top = 0.70 * 2.0 * 1.701e-5;
+ bgc.Kv_bot = 1.00 * 2.0 * 1.701e-5;
+ bgc.Kv_flex = -300;
+ bgc.Kv_width = 300;
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %%%%% Boundary conditions %%%%%%

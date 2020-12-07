@@ -87,7 +87,12 @@
  %%%%%%%% Vert Diffusion %%%%%%%%
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  bgc.Kv = bgc.Kv_param.*ones(1, length(bgc.zgrid ));
+  if bgc.depthvar_Kv == 1
+     bgc.Kv = 0.5*(bgc.Kv_top + bgc.Kv_bot) + 0.5*(bgc.Kv_top - bgc.Kv_bot) * ...
+              tanh((bgc.zgrid - bgc.Kv_flex)/(0.5*bgc.Kv_width));
+  else
+     bgc.Kv = bgc.Kv_param.*ones(1,length(bgc.zgrid));
+  end
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %%%%%%%%%%% Upwelling %%%%%%%%%%

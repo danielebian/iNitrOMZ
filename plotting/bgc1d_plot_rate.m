@@ -10,6 +10,7 @@ function bgc1d_plot_rate(bgc,rates,varargin)
 % Default arguments
  A.data = 1;
  A.fact = 1;
+ A.oxy_threshold = 1.0;	% o2 threshold ofr oxycline
  A.mode = 'oxycline'; % 'oxycline' references depth to oxycline depth (default)
  A.var = {'ammox','nitrox','nh4ton2o','n2onetden','no3tono2','no2ton2o','n2oton2','anammox'};
  A.fig = 0;
@@ -42,7 +43,7 @@ function bgc1d_plot_rate(bgc,rates,varargin)
  if strcmp(A.mode,'oxycline')
     % by referring them to the oxycline them  
     ind_o2 = find(strcmp(bgc.varname,'o2'));
-    depthox = bgc1d_detect_oxycline(bgc.sol(ind_o2,:),bgc);
+    depthox = bgc1d_detect_oxycline(bgc.sol(ind_o2,:),bgc,A.oxy_threshold);
     if ~isnan(depthox(1))
        for indv=1:length(A.var)
           if isfield(rates,A.var{indv})
@@ -58,8 +59,6 @@ function bgc1d_plot_rate(bgc,rates,varargin)
        bgc.(['Data_' A.var{indv}]) = nan_vect;
     end
  end
-
-
 
  nvar = length(A.var);
  pp = numSubplots(nvar);

@@ -1,24 +1,39 @@
-% Here, specify iNitrOMZ root path ($PATHTOINSTALL/iNitrOMZ/)
- bgc1d_root='/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/';
-% Adds CMAES subroutine:
- addpath('/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/optimization/CMA_ES/');
-
-% Handles output directory
- OptName = 'Opt2_Oct_test1_rescaled';
- OptCase = 'Test1';
+ % Runs an optimization with CMA_ES approach
+ bgc1d_root = '/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/';
+ %-----------------
+ % Optimization names
+ OptName = 'Opt_Nov_v1';
  OptNameLong = 'Fix baseline oxic param, vary Anoxic parameters, NO interpolated data, new rate constraints, *rescaled* by poc_flux ';
-% Proveds code paths:
- bgc1d_paths_init;
-% When working on HPCS, move everything in one folder and specify path here:
-%Optim.codeDir = [bgc1d_root,'comet/',OptCase,'/optimize_cmaes/'];
-%addpath(Optim.codeDir);
+
+ imode=1; % 1 for interactive job; 2 for batch job
+
+ switch imode
+ case 1
+    % Provides code paths:
+    addpath([bgc1d_root 'bgc1d_src/']);
+    addpath([bgc1d_root 'functions/']);
+    addpath([bgc1d_root 'processing/']);
+    addpath([bgc1d_root 'optimization/']);
+    addpath([bgc1d_root 'runscripts/']);
+    % Adds CMAES subroutine:
+    addpath([bgc1d_root 'optimization/CMA_ES/']);
+ case 2
+   % When working on HPCS, move everything in one folder and specify path here:
+   % Handles output directory using compilation script
+   %addpath(Optim.codeDir);
+ otherwise
+    error(['Case not found']);
+ end
+
+ %-----------------------
  curdir = pwd;
+% Creates folder for CMAES output
  DateNow = bgc1d_getDate();
-% creates folder for CMAES output
  savedir = ['cmaes_out_' DateNow '_' OptName];
  mkdir([bgc1d_root 'optimOut'],savedir);
  cd([bgc1d_root 'optimOut/' savedir]);
 
+%-------------------------------------------------------------------------------------
 % Reference parameters
  remin = 0.08/86400;
 
@@ -31,26 +46,26 @@
 %               'b',                    -1.0,                   -0.5;           ...
 %               'poc_flux_top',         -15/86400,              -3/86400;       ...
 %               'Krem',                 remin/10,               remin*5;        ...
-                'Ji_a'                  0.05,                   0.4;          ...
-                'Ji_b'                  0.05,                   0.2;          ...
-                'KAo',                  0.05/86400,             0.15/86400;              ...
-                'KNo',                  0.05/86400,             0.15/86400;              ...
+                'Ji_a'                  0.05,                   0.4;            ...
+                'Ji_b'                  0.05,                   0.2;            ...
+                'KAo',                  0.01/86400,             0.50/86400;     ...
+                'KNo',                  0.01/86400,             0.50/86400;     ...
                 'KDen1',                remin/10,               remin;          ...
                 'KDen2',                remin/10,               remin;          ...
                 'KDen3',                remin/10,               remin;          ...
-                'KAx',                  remin/5,                remin*5;        ...
+                'KAx',                  0.01/86400,             0.50/86400;     ...
                 'KO2Rem',               0.01,                   1.0;            ...
                 'KO2Den1',              0.01,                   6.0;            ...
                 'KO2Den2',              0.01,                   3.0;            ...
-                'KO2Den3',              0.01,                   3.0;              ...
-                'KO2Ax',                0.5,                    6.0;              ...
-                'KNH4Ao',               0.01,                   1.0;              ...
+                'KO2Den3',              0.01,                   3.0;            ...
+                'KO2Ax',                0.5,                    6.0;            ...
+                'KNH4Ao',               0.01,                   1.0;            ...
                 'KNO2No',               0.01,                   1.0;            ...
-                'KNO3Den1',             0.01,                   1.0;              ...
+                'KNO3Den1',             0.01,                   1.0;            ...
                 'KNO2Den2',             0.01,                   1.0;            ...
-                'KN2ODen3',             10/1000,               200/1000;            ...
-                'KNH4Ax',               0.1,                   1.0;            ...
-                'KNO2Ax',               0.1,                   1.0;            ...
+                'KN2ODen3',             10/1000,               200/1000;        ...
+                'KNH4Ax',               0.1,                   1.0;             ...
+                'KNO2Ax',               0.1,                   1.0;             ...
                 };
 
  ParNames = AllParam(:,1);
@@ -84,7 +99,7 @@
  ParSigma = ParRange./ParNorm/sqrt(12);
 
 % Options
- optn.EvalParallel = 0;
+ optn.EvalParallel = 1;
  optn.LBounds = (ParMin - ParMin) ./ ParNorm;
  optn.UBounds = (ParMax - ParMin) ./ ParNorm;
  optn.MaxFunEvals = 25000;
@@ -95,8 +110,7 @@
  if optn.EvalParallel==1
     FunName = 'bgc1d_fc2minimize_cmaes_parallel';
     delete(gcp('nocreate'))
-   %npar = 13;
-    npar = 4;
+    npar = 12;
     ThisPool = parpool('local',npar);
  else
     FunName = 'bgc1d_fc2minimize_cmaes';
@@ -111,7 +125,7 @@
  [pvarout, pmin, counteval, stopflag, out, bestever] = cmaes(FunName,ParStart,ParSigma,optn,FunArg);
 
 % Stops parallel pool
- if strcmp(optn.EvalParallel,'1')
+ if optn.EvalParallel==1
     delete(ThisPool);
  end
 

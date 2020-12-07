@@ -120,11 +120,13 @@ function [sol sadv sdiff ssms srest] = bgc1d_advection_diff(bgc)
     % terms for the numerical advection-diffusion solver. For time-dependent w and Kv
     % move these terms inside the time loop
     alpha = bgc.wup(2:end-1) * dt / (2*bgc.dz);
-    beta  = dt / (2.*bgc.dz) * (bgc.wup(3:end)-bgc.wup(1:end-2));
+    beta  = - dt / (2*bgc.dz) * (bgc.wup(1:end-2) - bgc.wup(3:end));
     gamma = bgc.Kv(2:end-1) * dt / (bgc.dz)^2;
+    delta =   dt / (4*bgc.dz) * (bgc.Kv(1:end-2) - bgc.Kv(3:end));
+    % Integration coefficients for the tracer at k,k+1,k-1 vertical levels:
     coeff1 = 1 + beta - 2*gamma;
-    coeff2 =     alpha +  gamma;
-    coeff3 =   - alpha +  gamma;
+    coeff2 =     alpha +  gamma - delta;
+    coeff3 =   - alpha +  gamma + delta;
 
     %%%% Now calculate Explicit tracer concentrations
     %%%% Top boundary conditions

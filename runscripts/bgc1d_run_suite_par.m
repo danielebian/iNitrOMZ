@@ -58,7 +58,7 @@
  %-------------------------------------------------------
 
  clear Suite;
- Suite.name = 'test_varKv_v1';
+ Suite.name = 'test1';
  Suite.long_name = 'Test';
  NameAdd = 1;  % 1 to add the parameter names to the Suite name
  Suite.base = bgc;
@@ -72,19 +72,17 @@
  % params : names of parameters to be varied
  % values : one vector of values for each parameter
  %---------------------
-%Suite.params	= {'poc_flux_top'};
+ Suite.params	= {'poc_flux_top'};
 %Suite.params	= {'wup_param','Kv_param','b','poc_flux_top'};
- Suite.params	= {'Kv_top','poc_flux_top','Kv_flex','Kv_width'};
+%Suite.params	= {'wup_param','Kv_param'};
 
+%Suite.wup_param = linspace(0.80,1.20,19)*4*7.972e-8;
+%Suite.Kv_param = linspace(0.80,1.20,19)*2*1.701e-5;
+ Suite.poc_flux_top = linspace(0.7,1.3,31)*2*(-7.5/86400*0.8);
 %Suite.wup_param = [1.00 1.41 2.00 2.83 4.00]*7.972e-8;
 %Suite.Kv_param = [0.50 0.71 1.00 1.41 2.00]*1.701e-5;
 %Suite.b = - [0.65 0.70 0.75 0.80 0.85];
 %Suite.poc_flux_top = [0.50 0.71 1.00 1.41 2.00]*0.8*(-7.5/86400); 
-%---
- Suite.Kv_top = [0.60 0.65 0.7 0.75 0.8]*2*1.701e-5;
- Suite.poc_flux_top = [1.85 1.90 1.95 2.00 2.05]*0.8*(-7.5/86400); 
- Suite.Kv_flex = - [200 250 300 350 400];
- Suite.Kv_width = [200 300 400];
 
  %-------------------------------------------------------
  Suite.nparam = length(Suite.params);
@@ -96,19 +94,25 @@
  end
  Suite.nruns = prod(Suite.dims);
  if length(Suite.dims)>1
-    Suite.Out = cell(Suite.dims);
+    Out = cell(Suite.dims);
  else
-    Suite.Out = cell(1,Suite.dims);
+    Out = cell(1,Suite.dims);
  end
+
+ %-------------------------------------------------------
+ % Allows parallelization
+ %-------------------------------------------------------
+
+ npar = 4;
+ ThisPool = parpool('local',npar);
 
  %-------------------------------------------------------
  % Loop through experiments
  %-------------------------------------------------------
 
- Tsuite = Suite.base;
- runindex = cell(Suite.nparam,1);
- for irun = 1:Suite.nruns
+ parfor irun = 1:Suite.nruns
     disp(['Run number # ' num2str(irun) '/' num2str(Suite.nruns)]);
+    runindex = cell(Suite.nparam,1);
     [runindex{:}] = ind2sub(Suite.dims,irun);
     %---------------------
     % Here, creates the input arguments for bio module and experiment setup
@@ -124,6 +128,7 @@
     % (use ['property',value] format)
     % Substitute the optimal parameters
     % Change parameters with those selected in Scenario_child(ichr).chromosome
+    Tsuite = Suite.base;
     for indp=1:length(arg_ParName)
        Tsuite = bgc1d_change_input(Tsuite,arg_ParName{indp},arg_ParVal(indp));
     end
@@ -135,29 +140,23 @@
           Tsuite = bgc1d_initIso_Dep_params(Tsuite);
        end
     end
-    % % % % % % % % % % % % % % % % % % % % 
-    if (0)
-       disp(['WARNING: updating any derived parameter']);
-       % % % % % % % % % % % %
-       % DERIVED PARAMETERS  %
-       % % % % % % % % % % % %
-       % E.g. change timestepping, etc.
-       % E.g. Constraints: 
-       % ... 
-       % ... KDen1 + KDen2 + KDen3 = remin
-       % % % % % % % % % % % %
-    end
     %---------------------
-    Suite.Out{irun} = Tsuite;
+    tmp = Tsuite;
     tic;
     % Run the model
-    [Suite.Out{irun}.sol_time, ~, ~, ~, ~] = bgc1d_advection_diff_opt(Suite.Out{irun});
-    Suite.Out{irun}.runtime = toc;
+    [tmp.sol_time, ~, ~, ~, ~] = bgc1d_advection_diff_opt(tmp);
+    tmp.runtime = toc;
     % Postprocess the results
-    Suite.Out{irun} = bgc1d_postprocess(Suite.Out{irun}, Data);
+    tmp = bgc1d_postprocess(tmp, Data);
     % Keeps track of runtime
+    Out{irun} = tmp;
  end
+
  %---------------------
+ delete(ThisPool);
+ %---------------------
+ Suite.Out = Out;
+
  % Keeps track of total time, summing up individual times
  Suite.runtime = 0;
  for irun = 1:Suite.nruns

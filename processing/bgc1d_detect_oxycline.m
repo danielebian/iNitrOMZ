@@ -1,8 +1,12 @@
-  function depth = bgc1d_detect_oxycline(o2,bgc);
+  function depth = bgc1d_detect_oxycline(o2,bgc,oxy_threshold);
 
  depth = nan(1,2);
 
- ind_anoxix = find(o2 < 1.0);
+ if nargin<3
+    oxy_threshold = 1.0;
+ end
+
+ ind_anoxix = find(o2 < oxy_threshold);
 
  if length(ind_anoxix) >= 2
     depth(1) = bgc.zgrid(ind_anoxix(1));

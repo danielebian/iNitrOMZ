@@ -1,4 +1,4 @@
- function bgc = bgc1d_postprocess(bgc, Data)
+ function bgc = bgc1d_postprocess(bgc,Data)
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % bgc1d Ncycle v1.0 - Simon Yang  - April 2015
