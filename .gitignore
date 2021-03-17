@@ -6,6 +6,10 @@ Data/
 saveOut/
 optimOut/
 restart/
+suiteOut/
+no_GitHUB/
+trash/
+.DS_Store
 
 comet/*.joblog
 comet/*.out

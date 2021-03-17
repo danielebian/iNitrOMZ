@@ -11,6 +11,7 @@ function tcost = bgc1d_fc2minimize_cmaes(ParStart,FunArg)
  % Initialize model:
  bgc = bgc1d_initialize;
  bgc.hist_verbose = false;
+ bgc.rest_verbose = false;
 
  % Change parameters with those selected in Scenario_child(ichr).chromosome
  for indp=1:length(ParNames)

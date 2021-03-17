@@ -1,0 +1,10 @@
+#!/bin/bash
+
+optname="Opt_Nov_v9_vKv_nir_40k"
+for i in {161..210..1}
+do
+   cp run_optimization_multirun.sh run_optimization_multirun_${optname}_${i}.sh
+   sed -i 's/ForSedTofind_Optim/'${optname}'/g' run_optimization_multirun_${optname}_${i}.sh
+   sed -i 's/ForSedTofind_Numb/'${i}'/g' run_optimization_multirun_${optname}_${i}.sh
+   qsub run_optimization_multirun_${optname}_${i}.sh
+done

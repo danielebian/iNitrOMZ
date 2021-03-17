@@ -8,9 +8,12 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
 
  % Tracer data
  % RAW DATA:
+ % For compilation, needs to use LOCAL path:
+%tmp = load(['compilation_ETSP_local.mat']);
+ % If bgc.root is accessible, use one of the following:
 %tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018.mat']);
 %tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Nov222020.mat']);
- % Hardwired path -- Only if CAN'T use bgc.root
+ % Hardwired path -- Only if CAN'T use bgc.root (e.g. evaluating the cost outside a main model call)
  tmp = load(['/Users/danielebianchi/AOS1/Ncycle/iNitrOMZ_v6.1/Data/compilation_ETSP_gridded_Nov222020.mat']);
  % INTERPOLATED (SMOOTH) DATA:
 %tmp = load([bgc.root,'/Data/compilation_ETSP_gridded_Feb232018_interpol.mat']);
@@ -49,16 +52,19 @@ function [tcost cost_pre bgc] = bgc1d_fc2minimize_evaluate_cost(bgc,iplot)
  
  %specify weights of tracer data for the optimization
 %        bgc.varname = {'o2' 'no3' 'poc' 'po4' 'n2o' 'nh4' 'no2' 'n2' 'nstar'}
-%Data.weights =         [0    0     0     0     1     0     0     0    0];      % Testing
 %Data.weights =         [2    0     0     1     0     0     0     0    0];      % Oxic optimization
 %Data.weights =         [2    0     0     1     6     0     3     0    2];      % Anoxic Optimization-1 - SY
 %Data.weights =         [1    1     0     1     2     0     1     0    0];      % Anoxic Optimization-1
 %Data.weights =         [2    1     0     1     8     0     4     0    4];      % Anoxic Optimization-2,4: excludes NH4
- Data.weights =         [2    1     0     1     8     2     4     0    4];      % Anoxic Optimization-3,5: includes NH4
- %			'nh4ton2o' 'noxton2o' 'no3tono2' 'anammox'
- Data.rates.weights = 	[0          0          0          0];
-%Data.rates.weights = 	[1          1          0          1];
-%Data.rates.weights = 	[1          1          1          1];
+%Data.weights =         [2    1     0     1     8     2     4     0    4];      % Anoxic Optimization-3,5,7: includes NH4
+%Data.weights =         [2    1     0     1     6     2     4     0    4];      % Anoxic Optimization-6: 
+%Data.weights =         [2    1     0     1     12     2     4     0    4];     % Anoxic Optimization-8: includes NH4
+ Data.weights =         [2    1     0     1     12     2     8     0    4];     % Anoxic Optimization-9: includes NH4
+%                       'nh4ton2o' 'noxton2o' 'no3tono2' 'anammox'
+%Data.rates.weights =   [1          1          1          1];
+%Data.rates.weights =   [0          0          0          0];
+%Data.rates.weights =   [1          1          0          1];
+ Data.rates.weights =   [1          1          1          1];
  
  if sum(Data.rates.weights) > 0
     bgc = bgc1d_getrates(bgc, Data);

@@ -1,0 +1,40 @@
+
+ Flowchart to run a series of optimizations:
+
+ - Change the name of optimization $Optim in:
+   optimize_cmaes.m
+   note that by default compile script uses "optimize_cmaes.m" from current folder
+   but this can be changed within the compile script
+ - Change name of basedir $Optim (same name) in:
+   compile_script.m
+ - Change any part of the code e.g. "bgc1d_fc2minimize_evaluate_cost.m"
+   in the main code folder (specified in compilation script) as this is the
+   code that is going to be used for the optimization series
+ - Run "compile_script.m" in Matlab in the "compile/" folder 
+   compile_script
+   This will generate a local folder $Optim/optimize_cmaes/
+   contianing all the fucntions and files for running and compiling
+   Matlab will also generate the compilation command
+ - Do any changes to files under $Optim/optimize_cmaes/ before compiling
+   e.g. need to comment all "addpath" instances for safety 
+   follow the instruction prompted by matlab command line
+   NOTE: to use local files, make sure "cost function" doesnt use long paths 
+ - Run compilation command (copy and paste from command line):
+   mcc -m -R -nosplash optimize_cmaes.m ...
+ - TO RUN INTERACTIVELY
+   ./optimize_cmaes > logfile.txt
+ - TO RUN MULTIPLE JOBS AS BATCH
+   change the $Optim name in 
+   runMultiMatlab.sb
+   to match name in optimize_cmaes.m and compile_script.m
+   Change the indices of the runs e.g. to run 50 runs use:
+   "for i in {1..50..1}"
+   Submit code:
+   ./runMultiMatlab.sb
+   This will generate a bunch of runscript for a series of optimizations
+   and automatically submit them to the queue
+ - When done, move the series of runscripts into the $Optname/runscript/ folder
+   for cleaniness
+    
+
+

@@ -54,8 +54,6 @@
    %endTimey = [650 670 690 700];
     dt       = [5.0 2.0 1.0 0.5 0.25 0.125]*86400;
     endTimey = [650 670 690 695 698 700];
-   %dt       = 0.5*[5.0 2.0 1.0 0.5 0.25 0.125]*86400;
-   %endTimey = [350 370 390 395 398 400];
     % Output time step
     histTimey = 20; % history timestep (years)
     [dt_vec time_vec hist_time_vec hist_time_ind hist_time] = bgc1d_process_time_stepping(dt,endTimey,histTimey);
@@ -69,6 +67,7 @@
  bgc.nt = length(bgc.dt_vec);
  bgc.nt_hist = length(bgc.hist_time_ind);
  bgc.hist_verbose = true; % prompts a message at each saving timestep
+ bgc.rest_verbose = true; % prompts a message when loading restart
 
  bgc.FromRestart = 1; % initialize from restart? 1 yes, 0 no
  bgc.RestartFile = 'test_ETSP_F0p8_U2_restart_700.0.mat'; % restart file
@@ -110,7 +109,7 @@
  % For sigmoidal Kv, use the following parameters
  bgc.Kv_top = 0.70 * 2.0 * 1.701e-5;
  bgc.Kv_bot = 1.00 * 2.0 * 1.701e-5;
- bgc.Kv_flex = -300;
+ bgc.Kv_flex = -250;
  bgc.Kv_width = 300;
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

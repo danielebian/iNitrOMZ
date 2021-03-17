@@ -39,4 +39,19 @@
    cost2.(vars{indv}) = reshape(tmp,[nsize osize(2)]);
  end
 
+ % To get indeces of best cost
+ [cmin ibest] = min(cost.all);
+ bestindex = cell(Suite.nparam,1);
+ [bestindex{:}] = ind2sub(Suite.dims,ibest);
+
+ if (1)
+ % list first "nmax" best runs
+ nmax = 25;
+ [scost sind] = sort(cost.all,'ascend');
+    for indi=1:nmax
+       bestindex = cell(Suite.nparam,1);
+       [bestindex{:}] = ind2sub(Suite.dims,sind(indi)); 
+       disp([num2str(indi) ' (' num2str(sind(indi)) ') : ' num2str(scost(indi)) ' - ' num2str([bestindex{:}])]); 
+    end
+ end
  
